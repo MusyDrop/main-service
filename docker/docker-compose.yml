@@ -1,0 +1,32 @@
+version: "4.0"
+
+services:
+  redis:
+    image: redis:7.0.11
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - audio-meta-service-network
+  minio:
+    container_name: minio
+    image: minio/minio
+    restart: always
+    volumes:
+      - minio-storage:/data
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: root
+      MINIO_ROOT_PASSWORD: password
+    command: server --console-address ":9001" /data
+    networks:
+      - audio-meta-service-network
+
+
+networks:
+  audio-meta-service-network:
+
+volumes:
+  minio-storage:

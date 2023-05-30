@@ -1,0 +1,1 @@
+docker-compose -p audio-meta-service up
