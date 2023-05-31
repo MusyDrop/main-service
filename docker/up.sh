@@ -1,1 +1,1 @@
-docker-compose -p audio-meta-service up
+docker-compose -p main-service up

@@ -7,6 +7,11 @@ import {
 } from './schemas/microservices-config';
 import { MinioConfig, minioConfigSchema } from './schemas/minio-config';
 import { JoiAppConfig } from '../utils/joi/joiTypes';
+import { MailerConfig, mailerConfigSchema } from './schemas/mailer-config';
+import {
+  PostgresConfig,
+  postgresConfigSchema
+} from './schemas/postgres-config';
 
 // the keys from here in the custom config service
 export interface AppConfig {
@@ -14,13 +19,17 @@ export interface AppConfig {
   redis: RedisConfig;
   microservices: MicroservicesConfig;
   minio: MinioConfig;
+  mailer: MailerConfig;
+  postgres: PostgresConfig;
 }
 
 export const appSchema = (): JoiAppConfig<AppConfig> => ({
   server: serverConfigSchema(),
   redis: redisConfigSchema(),
   microservices: microservicesConfigSchema(),
-  minio: minioConfigSchema()
+  minio: minioConfigSchema(),
+  mailer: mailerConfigSchema(),
+  postgres: postgresConfigSchema()
 });
 
 export const configuration = (): AppConfig => {
