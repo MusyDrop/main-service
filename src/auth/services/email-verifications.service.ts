@@ -50,7 +50,7 @@ export class EmailVerificationsService {
       emailVerificationInstance
     );
 
-    await this.mailer.sendEmailVerification(email);
+    await this.mailer.sendEmailVerification(email, emailVerification.guid);
 
     return emailVerification;
   }

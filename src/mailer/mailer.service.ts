@@ -25,11 +25,14 @@ export class MailerService {
     });
   }
 
-  public async sendEmailVerification(to: string): Promise<void> {
+  public async sendEmailVerification(
+    to: string,
+    verificationGuid: string
+  ): Promise<void> {
     const base = this.config.get('server.fullUrl');
 
     const payload: VerificationEmailPayload = {
-      verificationLink: `${base}/email-verifications/verify`,
+      verificationLink: `${base}/email-verifications/verify?guid=${verificationGuid}`,
       serverHealthEndpoint: `${base}/health`
     };
 
