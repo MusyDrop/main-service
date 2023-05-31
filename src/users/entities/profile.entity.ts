@@ -27,7 +27,7 @@ export class Profile {
   @Column({ nullable: true })
   phone: string;
 
-  @OneToOne(() => User, { nullable: false })
+  @OneToOne(() => User, { nullable: false, cascade: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
   user?: User;
 

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import mailer from '@sendgrid/mail';
 import { ExtendedConfigService } from '../config/extended-config.service';
 import { AnyObject } from '../utils/types';
+import { VerificationEmailPayload } from './interfaces/verification-email.interface';
 
 @Injectable()
 export class MailerService {
@@ -22,5 +23,21 @@ export class MailerService {
       templateId,
       dynamicTemplateData
     });
+  }
+
+  public async sendEmailVerification(to: string): Promise<void> {
+    const base = this.config.get('server.fullUrl');
+
+    const payload: VerificationEmailPayload = {
+      verificationLink: `${base}/email-verifications/verify`,
+      serverHealthEndpoint: `${base}/health`
+    };
+
+    await this.send(
+      to,
+      'MusyDrop Email Verification',
+      this.config.get('mailer.templates.verification'),
+      payload
+    );
   }
 }

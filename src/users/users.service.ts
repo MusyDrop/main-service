@@ -12,12 +12,16 @@ export class UsersService implements OnModuleInit {
     private readonly profilesService: ProfilesService
   ) {}
 
-  public async findByIdNullable(id: number): Promise<User | null> {
-    return await this.usersRepository.findOneBy({ id });
+  public async findByNullable(props: DeepPartial<User>): Promise<User | null> {
+    return await this.usersRepository.findOneBy({
+      id: props.id,
+      guid: props.guid,
+      email: props.email
+    });
   }
 
-  public async findById(id: number): Promise<User> {
-    const user = await this.findByIdNullable(id);
+  public async findBy(props: DeepPartial<User>): Promise<User> {
+    const user = await this.findByNullable(props);
 
     if (!user) {
       throw new NotFoundException('User was not found');

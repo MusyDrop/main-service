@@ -8,9 +8,11 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
 
   const logger = app.get(Logger);
+  const configService = app.get<ExtendedConfigService>(ExtendedConfigService);
+  const globalPrefix = configService.get('server.globalPrefix');
 
   app.useLogger(logger);
-
+  app.setGlobalPrefix(globalPrefix);
   app.useGlobalPipes(
     new ValidationPipe({
       // transforms if @Type() decorator is specified in dtos
@@ -27,17 +29,15 @@ async function bootstrap(): Promise<void> {
   app.enableShutdownHooks();
 
   // startup
-  const configService = app.get<ExtendedConfigService>(ExtendedConfigService);
-
   const port = configService.get('server.port');
-  const baseUrl = configService.get('server.serverBaseUrl');
+  const baseUrl = configService.get('server.baseUrl');
 
   await app.listen(port);
 
   logger.log(
     `Server is instantiated and listening to incoming requests - ${baseUrl}`
   );
-  logger.log(`Service health check - ${baseUrl}/health`);
+  logger.log(`Service health check - ${baseUrl}${globalPrefix}/health`);
 }
 
 bootstrap();

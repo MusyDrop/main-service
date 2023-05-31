@@ -1,1 +1,0 @@
-export const VERIFICATION_EMAIL_EXPIRE_DAYS = 7;

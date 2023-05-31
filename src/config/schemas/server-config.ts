@@ -9,8 +9,10 @@ export interface ServerConfig {
   nodeEnv: NodeEnv;
   adminEmail: string;
   adminPassword: string;
-  serverBaseUrl: string;
+  baseUrl: string;
+  fullUrl: string;
   isProduction: boolean;
+  globalPrefix: string;
 }
 
 export const serverConfigSchema = (): JoiConfig<ServerConfig> => ({
@@ -36,12 +38,22 @@ export const serverConfigSchema = (): JoiConfig<ServerConfig> => ({
     value: process.env.INIT_ADMIN_PASSWORD as string,
     schema: Joi.string().required()
   },
-  serverBaseUrl: {
+  baseUrl: {
     value: process.env.SERVER_BASE_URL as string,
     schema: Joi.string().required()
   },
   isProduction: {
     value: (process.env.NODE_ENV as NodeEnv) === NodeEnv.production,
     schema: Joi.boolean().required()
+  },
+  globalPrefix: {
+    value: process.env.SERVER_GLOBAL_PREFIX as string,
+    schema: Joi.string().required()
+  },
+  fullUrl: {
+    value: `${process.env.SERVER_BASE_URL as string}${
+      process.env.SERVER_GLOBAL_PREFIX as string
+    }`,
+    schema: Joi.string().required()
   }
 });
