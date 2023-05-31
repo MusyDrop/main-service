@@ -13,6 +13,6 @@ import { UsersModule } from '../users/users.module';
   ],
   controllers: [AuthController],
   providers: [AuthService, EmailVerificationService],
-  exports: [EmailVerificationService]
+  exports: [AuthService, EmailVerificationService]
 })
 export class AuthModule {}

@@ -12,6 +12,7 @@ import {
   PostgresConfig,
   postgresConfigSchema
 } from './schemas/postgres-config';
+import { AuthConfig, authConfigSchema } from './schemas/auth-config';
 
 // the keys from here in the custom config service
 export interface AppConfig {
@@ -21,6 +22,7 @@ export interface AppConfig {
   minio: MinioConfig;
   mailer: MailerConfig;
   postgres: PostgresConfig;
+  auth: AuthConfig;
 }
 
 export const appSchema = (): JoiAppConfig<AppConfig> => ({
@@ -29,7 +31,8 @@ export const appSchema = (): JoiAppConfig<AppConfig> => ({
   microservices: microservicesConfigSchema(),
   minio: minioConfigSchema(),
   mailer: mailerConfigSchema(),
-  postgres: postgresConfigSchema()
+  postgres: postgresConfigSchema(),
+  auth: authConfigSchema()
 });
 
 export const configuration = (): AppConfig => {

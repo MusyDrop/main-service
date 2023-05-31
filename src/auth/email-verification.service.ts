@@ -11,8 +11,8 @@ export class EmailVerificationService implements OnModuleInit {
   ) {}
 
   async onModuleInit(): Promise<void> {
-    const emailV = this.emailVerificationRepository.create();
-    emailV.setExpiresAt();
-    await this.emailVerificationRepository.save(emailV);
+    // const emailV = this.emailVerificationRepository.create();
+    // emailV.setExpiresAt();
+    // await this.emailVerificationRepository.save(emailV);
   }
 }

@@ -29,7 +29,7 @@ export class Profile {
 
   @OneToOne(() => User, { nullable: false })
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user?: User;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;
