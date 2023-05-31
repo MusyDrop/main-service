@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { VerifyEmailQueryDto } from './dtos/verify-email-query.dto';
-import { EmailVerificationsService } from './services/email-verifications.service';
-import { SuccessResponseDto } from '../common/dtos/success-response.dto';
+import { VerifyEmailQueryDto } from '../dtos/verify-email-query.dto';
+import { EmailVerificationsService } from '../services/email-verifications.service';
+import { SuccessResponseDto } from '../../common/dtos/success-response.dto';
 
 @Controller('/email-verifications')
 export class EmailVerificationsController {

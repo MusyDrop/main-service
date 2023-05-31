@@ -14,10 +14,21 @@ export class EmailVerificationsService {
     private readonly mailer: MailerService
   ) {}
 
-  public async findOneByNullable(
+  public async findOneNullable(
     props: DeepPartial<EmailVerification>
   ): Promise<EmailVerification | null> {
     return await this.emailVerificationRepository.findOneBy({
+      id: props.id,
+      guid: props.guid,
+      user: { id: props.id },
+      verified: props.verified
+    });
+  }
+
+  public async findAll(
+    props: DeepPartial<EmailVerification>
+  ): Promise<EmailVerification[]> {
+    return await this.emailVerificationRepository.findBy({
       id: props.id,
       guid: props.guid,
       user: { id: props.id },
@@ -45,7 +56,7 @@ export class EmailVerificationsService {
   }
 
   public async verify(guid: string): Promise<void> {
-    const verification = await this.findOneByNullable({ guid });
+    const verification = await this.findOneNullable({ guid });
 
     if (!verification) {
       throw new BadRequestException('Unable to find this email verification');

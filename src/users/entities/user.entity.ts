@@ -4,9 +4,11 @@ import {
   DeleteDateColumn,
   Entity,
   Generated,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
+import { Profile } from './profile.entity';
 
 @Entity({ name: 'users' })
 export class User {
@@ -22,6 +24,9 @@ export class User {
 
   @Column()
   password: string;
+
+  @OneToOne(() => Profile, (profile) => profile.user, { nullable: false })
+  profile: Profile;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

@@ -12,7 +12,7 @@ export class UsersService implements OnModuleInit {
     private readonly profilesService: ProfilesService
   ) {}
 
-  public async findByNullable(props: DeepPartial<User>): Promise<User | null> {
+  public async findOneNullable(props: DeepPartial<User>): Promise<User | null> {
     return await this.usersRepository.findOneBy({
       id: props.id,
       guid: props.guid,
@@ -20,14 +20,29 @@ export class UsersService implements OnModuleInit {
     });
   }
 
-  public async findBy(props: DeepPartial<User>): Promise<User> {
-    const user = await this.findByNullable(props);
+  public async findOne(props: DeepPartial<User>): Promise<User> {
+    const user = await this.findOneNullable(props);
 
     if (!user) {
       throw new NotFoundException('User was not found');
     }
 
     return user;
+  }
+
+  public async findOneWithProfileNullable(
+    props: DeepPartial<User>
+  ): Promise<User | null> {
+    return await this.usersRepository.findOne({
+      relations: {
+        profile: true
+      },
+      where: {
+        id: props.id,
+        guid: props.guid,
+        email: props.email
+      }
+    });
   }
 
   /**

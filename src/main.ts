@@ -3,6 +3,7 @@ import { AppModule } from './app/app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { Logger } from 'nestjs-pino';
 import { ExtendedConfigService } from './config/extended-config.service';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
@@ -13,6 +14,7 @@ async function bootstrap(): Promise<void> {
 
   app.useLogger(logger);
   app.setGlobalPrefix(globalPrefix);
+  app.use(cookieParser());
   app.useGlobalPipes(
     new ValidationPipe({
       // transforms if @Type() decorator is specified in dtos

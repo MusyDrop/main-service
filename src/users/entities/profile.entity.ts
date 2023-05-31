@@ -27,9 +27,13 @@ export class Profile {
   @Column({ nullable: true })
   phone: string;
 
-  @OneToOne(() => User, { nullable: false, cascade: true, onDelete: 'CASCADE' })
+  @OneToOne(() => User, (user) => user.profile, {
+    nullable: false,
+    cascade: true,
+    onDelete: 'CASCADE'
+  })
   @JoinColumn({ name: 'user_id' })
-  user?: User;
+  user: User;
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

@@ -2,10 +2,12 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { UsersService } from '../../users/users.service';
 import { ProfilesService } from '../../users/profiles.service';
 import { SignupDto } from '../dtos/signup.dto';
-import { SignupResponseDto } from '../dtos/response/signup-response.dto';
 import { AuthUtilsService } from './auth-utils.service';
 import { JwtTokensService } from './jwt-tokens.service';
 import { EmailVerificationsService } from './email-verifications.service';
+import { SigninDto } from '../dtos/signin.dto';
+import { SignupInfo } from '../interfaces/signup-info.interface';
+import { SigninInfo } from '../interfaces/signin-info.interface';
 
 @Injectable()
 export class StandardAuthService {
@@ -17,8 +19,8 @@ export class StandardAuthService {
     private readonly emailVerificationService: EmailVerificationsService
   ) {}
 
-  public async signup(signupDto: SignupDto): Promise<SignupResponseDto> {
-    const existingUser = await this.usersService.findByNullable({
+  public async signup(signupDto: SignupDto): Promise<SignupInfo> {
+    const existingUser = await this.usersService.findOneNullable({
       email: signupDto.email
     });
 
@@ -46,8 +48,10 @@ export class StandardAuthService {
     const {
       accessToken,
       accessTokenExpiresAt,
+      accessTokenCookie,
       refreshToken,
-      refreshTokenExpiresAt
+      refreshTokenExpiresAt,
+      refreshTokenCookie
     } = await this.jwtTokensService.generateTokenPair({
       userId: user.id,
       userEmail: user.email,
@@ -55,20 +59,77 @@ export class StandardAuthService {
       roles: []
     });
 
-    const emailVerification =
-      await this.emailVerificationService.sendEmailVerification(
-        user.id,
-        user.email
-      );
+    await this.emailVerificationService.sendEmailVerification(
+      user.id,
+      user.email
+    );
 
     return {
-      accessToken,
-      refreshToken,
-      accessTokenExpiresAt,
-      refreshTokenExpiresAt,
       email: user.email,
       userGuid: user.guid,
-      emailVerificationGuid: emailVerification.guid
+
+      accessToken,
+      accessTokenExpiresAt,
+      accessTokenCookie,
+      refreshToken,
+      refreshTokenExpiresAt,
+      refreshTokenCookie
+    };
+  }
+
+  public async signin(dto: SigninDto): Promise<SigninInfo> {
+    const user = await this.usersService.findOneWithProfileNullable({
+      email: dto.email
+    });
+
+    if (!user) {
+      throw new BadRequestException('Email or password is incorrect');
+    }
+
+    const isPasswordCorrect =
+      await this.authUtilsService.comparePasswordCandidate(
+        dto.password,
+        user.password
+      );
+
+    if (!isPasswordCorrect) {
+      throw new BadRequestException('Email or password is incorrect');
+    }
+
+    const emailVerification =
+      await this.emailVerificationService.findOneNullable({
+        user: { id: user.id },
+        verified: true
+      });
+
+    if (!emailVerification) {
+      throw new BadRequestException(
+        'Please verify your email in order to sign in.'
+      );
+    }
+
+    const {
+      accessToken,
+      accessTokenExpiresAt,
+      accessTokenCookie,
+      refreshToken,
+      refreshTokenExpiresAt,
+      refreshTokenCookie
+    } = await this.jwtTokensService.generateTokenPair({
+      userId: user.id,
+      userEmail: user.email,
+      userGuid: user.guid,
+      roles: []
+    });
+
+    return {
+      user,
+      accessToken,
+      accessTokenExpiresAt,
+      accessTokenCookie,
+      refreshToken,
+      refreshTokenExpiresAt,
+      refreshTokenCookie
     };
   }
 }
