@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RefreshToken } from '../entities/refresh-token.entity';
 import { DeepPartial, Repository, Transaction } from 'typeorm';
@@ -8,6 +8,7 @@ import { ExtendedConfigService } from '../../config/extended-config.service';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
 import { GeneratedJwt } from '../interfaces/generated-jwt.interface';
 import { JwtPair } from '../interfaces/jwt-pair.interface';
+import { tr } from 'date-fns/locale';
 
 @Injectable()
 export class JwtTokensService {
@@ -24,17 +25,6 @@ export class JwtTokensService {
       id: props.id,
       token: props.token,
       user: { id: props.id }
-    });
-  }
-
-  public async createRefreshToken(
-    props: DeepPartial<RefreshToken>
-  ): Promise<RefreshToken> {
-    return await this.refreshTokensRepository.save({
-      id: props.id,
-      token: props.token,
-      user: { id: props.id },
-      expiresAt: props.expiresAt
     });
   }
 
@@ -127,5 +117,32 @@ export class JwtTokensService {
       refreshTokenExpiresAt,
       refreshTokenCookie
     };
+  }
+
+  /**
+   * Verifies access token
+   * @returns null in case token is invalid
+   * @param token
+   */
+  public async verifyAccessToken(token: string): Promise<JwtPayload | null> {
+    try {
+      return jwt.verify(
+        token,
+        this.config.get('auth.accessTokenSecret')
+      ) as JwtPayload;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  public async verifyRefreshToken(token: string): Promise<JwtPayload | null> {
+    try {
+      return jwt.verify(
+        token,
+        this.config.get('auth.refreshTokenSecret')
+      ) as JwtPayload;
+    } catch (e) {
+      return null;
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '../config/config.module';
@@ -8,6 +8,7 @@ import { MailerModule } from '../mailer/mailer.module';
 import { AuthModule } from '../auth/auth.module';
 import { UsersModule } from '../users/users.module';
 import { DbModule } from '../db/db.module';
+import { MetadataMiddleware } from '../common/middlewares/metadata.middleware';
 
 @Module({
   imports: [
@@ -22,4 +23,9 @@ import { DbModule } from '../db/db.module';
   controllers: [AppController],
   providers: [AppService]
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  // supplying a middleware here allows DI container usage inside a middleware
+  configure(consumer: MiddlewareConsumer): void {
+    consumer.apply(MetadataMiddleware).forRoutes('*');
+  }
+}

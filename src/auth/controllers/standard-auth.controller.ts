@@ -1,10 +1,20 @@
-import { Body, Controller, Post, Response } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Req,
+  Res,
+  UseGuards
+} from '@nestjs/common';
 import { StandardAuthService } from '../services/standard-auth.service';
 import { SignupDto } from '../dtos/signup.dto';
 import { SignupResponseDto } from '../dtos/response/signup-response.dto';
 import { SigninDto } from '../dtos/signin.dto';
 import { SigninResponseDto } from '../dtos/response/signin-response.dto';
-import express from 'express';
+import express, { Request, Response } from 'express';
+import { SuccessResponseDto } from '../../common/dtos/success-response.dto';
+import { AuthRefreshGuard } from '../guards/auth-refresh.guard';
 
 @Controller('/standard-auth')
 export class StandardAuthController {
@@ -23,7 +33,7 @@ export class StandardAuthController {
   @Post('/signin')
   public async signin(
     @Body() body: SigninDto,
-    @Response({ passthrough: true }) res: express.Response
+    @Res({ passthrough: true }) res: Response
   ): Promise<SigninResponseDto> {
     const signinInfo = await this.standardAuthService.signin(body);
 
@@ -44,5 +54,22 @@ export class StandardAuthController {
         }
       }
     };
+  }
+
+  @UseGuards(AuthRefreshGuard)
+  @Get('/refresh')
+  public async refresh(
+    @Req() req: Request,
+    @Res({ passthrough: true })
+    res: express.Response
+  ): Promise<SuccessResponseDto> {
+    const generatedJwt = await this.standardAuthService.refresh(
+      req.userId,
+      req.refreshToken
+    );
+
+    res.setHeader('Set-Cookie', [generatedJwt.cookie]);
+
+    return new SuccessResponseDto('Refresh of access token');
   }
 }

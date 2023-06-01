@@ -22,8 +22,11 @@ export class User {
   @Column({ unique: true })
   email: string;
 
-  @Column()
-  password: string;
+  /**
+   * Nullable when authenticated via OAUTH
+   */
+  @Column({ nullable: true })
+  password?: string;
 
   @OneToOne(() => Profile, (profile) => profile.user, { nullable: false })
   profile: Profile;

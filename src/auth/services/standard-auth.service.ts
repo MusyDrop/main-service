@@ -1,4 +1,9 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+  UseGuards
+} from '@nestjs/common';
 import { UsersService } from '../../users/users.service';
 import { ProfilesService } from '../../users/profiles.service';
 import { SignupDto } from '../dtos/signup.dto';
@@ -8,6 +13,8 @@ import { EmailVerificationsService } from './email-verifications.service';
 import { SigninDto } from '../dtos/signin.dto';
 import { SignupInfo } from '../interfaces/signup-info.interface';
 import { SigninInfo } from '../interfaces/signin-info.interface';
+import { AuthGuard } from '../guards/auth.guard';
+import { GeneratedJwt } from '../interfaces/generated-jwt.interface';
 
 @Injectable()
 export class StandardAuthService {
@@ -131,5 +138,30 @@ export class StandardAuthService {
       refreshTokenExpiresAt,
       refreshTokenCookie
     };
+  }
+
+  public async refresh(
+    userId: number,
+    refreshToken: string
+  ): Promise<GeneratedJwt> {
+    const user = await this.usersService.findOne({
+      id: userId
+    });
+
+    const token = await this.jwtTokensService.findRefreshTokenNullable({
+      user: { id: userId },
+      token: refreshToken
+    });
+
+    if (!token) {
+      throw new UnauthorizedException('Session was terminated.');
+    }
+
+    return this.jwtTokensService.generateAccessToken({
+      userId,
+      userGuid: user.guid,
+      userEmail: user.email,
+      roles: []
+    });
   }
 }

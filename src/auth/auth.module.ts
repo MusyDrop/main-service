@@ -11,6 +11,7 @@ import { JwtTokensService } from './services/jwt-tokens.service';
 import { RefreshToken } from './entities/refresh-token.entity';
 import { MailerModule } from '../mailer/mailer.module';
 import { EmailVerificationsController } from './controllers/email-verifications.controller';
+import { GoogleAuthController } from './controllers/google-auth.controller';
 
 @Module({
   imports: [
@@ -19,7 +20,11 @@ import { EmailVerificationsController } from './controllers/email-verifications.
     ConfigModule,
     MailerModule
   ],
-  controllers: [StandardAuthController, EmailVerificationsController],
+  controllers: [
+    StandardAuthController,
+    EmailVerificationsController,
+    GoogleAuthController
+  ],
   providers: [
     StandardAuthService,
     EmailVerificationsService,
