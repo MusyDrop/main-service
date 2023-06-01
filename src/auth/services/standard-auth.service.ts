@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   UnauthorizedException,
+  UnprocessableEntityException,
   UseGuards
 } from '@nestjs/common';
 import { UsersService } from '../../users/users.service';
@@ -91,6 +92,10 @@ export class StandardAuthService {
 
     if (!user) {
       throw new BadRequestException('Email or password is incorrect');
+    }
+
+    if (!user.password) {
+      throw new UnprocessableEntityException('Please use your OAuth provider');
     }
 
     const isPasswordCorrect =

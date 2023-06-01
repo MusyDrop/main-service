@@ -12,6 +12,7 @@
     "client_id": "413585025782-a7k02ml0f6v76js89jdkmf30q1ue5kv6.apps.googleusercontent.com",
     "scope": "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
     ux_mode: "popup",
+    redirect_uri: 'http://localhost:3000/api/main/auth/google/signup',
     callback: async (googleRes) => {
       console.log(googleRes);
       const res = await fetch("http://localhost:3000/api/main/auth/google/signup", {
@@ -25,16 +26,11 @@
 
       const parsedRes = await res.json();
 
-      const div = document.getElementById("result");
-      div.innerText = `Success, ${ parsedRes.email }`;
-      setTimeout(() => {
-        div.innerText = "";
-      }, 5000);
+      console.log(parsedRes);
     }
   };
   const client = google.accounts.oauth2.initCodeClient(params);
 </script>
 <button style="margin: 50px" onclick="client.requestCode();">Sign In</button>
-<div id="result" style="margin: 100px"></div>
 </body>
 </html>

@@ -3,7 +3,7 @@ import { VerifyEmailQueryDto } from '../dtos/verify-email-query.dto';
 import { EmailVerificationsService } from '../services/email-verifications.service';
 import { SuccessResponseDto } from '../../common/dtos/success-response.dto';
 
-@Controller('/email-verifications')
+@Controller('/auth/email-verifications')
 export class EmailVerificationsController {
   constructor(
     private readonly emailVerificationsService: EmailVerificationsService

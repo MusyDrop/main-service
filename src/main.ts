@@ -28,6 +28,7 @@ async function bootstrap(): Promise<void> {
     })
   );
 
+  app.enableCors();
   app.enableShutdownHooks();
 
   // startup

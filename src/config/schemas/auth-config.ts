@@ -1,5 +1,7 @@
 import Joi from 'joi';
 import { JoiConfig } from '../../utils/joi/joiTypes';
+import * as process from 'process';
+import { AnyObject } from '../../utils/types';
 
 export interface AuthConfig {
   accessTokenSecret: string;
@@ -8,6 +10,9 @@ export interface AuthConfig {
   refreshTokenExpiresInSec: number;
 
   emailVerificationExpiresInSec: number;
+
+  googleClientId: string;
+  googleClientSecret: string;
 }
 
 export const authConfigSchema = (): JoiConfig<AuthConfig> => ({
@@ -36,5 +41,13 @@ export const authConfigSchema = (): JoiConfig<AuthConfig> => ({
       10
     ),
     schema: Joi.number().required()
+  },
+  googleClientId: {
+    value: process.env.AUTH_GOOGLE_CLIENT_ID as string,
+    schema: Joi.string().required()
+  },
+  googleClientSecret: {
+    value: process.env.AUTH_GOOGLE_CLIENT_SECRET as string,
+    schema: Joi.string().required()
   }
 });

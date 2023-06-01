@@ -1,14 +1,13 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RefreshToken } from '../entities/refresh-token.entity';
-import { DeepPartial, Repository, Transaction } from 'typeorm';
+import { DeepPartial, Repository } from 'typeorm';
 import { addSeconds } from 'date-fns';
 import jwt from 'jsonwebtoken';
 import { ExtendedConfigService } from '../../config/extended-config.service';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
 import { GeneratedJwt } from '../interfaces/generated-jwt.interface';
 import { JwtPair } from '../interfaces/jwt-pair.interface';
-import { tr } from 'date-fns/locale';
 
 @Injectable()
 export class JwtTokensService {

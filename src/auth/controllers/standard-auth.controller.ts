@@ -16,7 +16,7 @@ import express, { Request, Response } from 'express';
 import { SuccessResponseDto } from '../../common/dtos/success-response.dto';
 import { AuthRefreshGuard } from '../guards/auth-refresh.guard';
 
-@Controller('/standard-auth')
+@Controller('/auth/standard')
 export class StandardAuthController {
   constructor(private readonly standardAuthService: StandardAuthService) {}
 
