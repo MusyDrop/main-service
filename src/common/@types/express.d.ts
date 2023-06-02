@@ -19,6 +19,7 @@ declare namespace Express {
      * Set by Auth Guards
      */
     userId?: number;
+    email?: string;
     accessToken?: string;
     refreshToken?: string;
   }

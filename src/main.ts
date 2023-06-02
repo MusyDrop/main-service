@@ -28,7 +28,10 @@ async function bootstrap(): Promise<void> {
     })
   );
 
-  app.enableCors();
+  app.enableCors({
+    credentials: true,
+    origin: 'http://localhost:9999'
+  });
   app.enableShutdownHooks();
 
   // startup

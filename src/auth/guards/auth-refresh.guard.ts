@@ -47,6 +47,7 @@ export class AuthRefreshGuard implements CanActivate {
     }
 
     request.userId = payload.userId;
+    request.email = payload.userEmail;
     request.refreshToken = cookies.Refresh;
 
     return true;

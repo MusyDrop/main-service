@@ -6,7 +6,6 @@ import { EmailVerification } from './entities/email-verification.entity';
 import { EmailVerificationsService } from './services/email-verifications.service';
 import { UsersModule } from '../users/users.module';
 import { ConfigModule } from '../config/config.module';
-import { AuthUtilsService } from './services/auth-utils.service';
 import { JwtTokensService } from './services/jwt-tokens.service';
 import { RefreshToken } from './entities/refresh-token.entity';
 import { MailerModule } from '../mailer/mailer.module';
@@ -14,6 +13,8 @@ import { EmailVerificationsController } from './controllers/email-verifications.
 import { GoogleAuthController } from './controllers/google-auth.controller';
 import { GoogleAuthService } from './services/google-auth.service';
 import { GoogleHttpService } from './services/google-http.service';
+import { TwoFactorAuthController } from './controllers/two-factor-auth.controller';
+import { TwoFactorAuthService } from './services/two-factor-auth.service';
 
 @Module({
   imports: [
@@ -25,16 +26,21 @@ import { GoogleHttpService } from './services/google-http.service';
   controllers: [
     StandardAuthController,
     EmailVerificationsController,
-    GoogleAuthController
+    GoogleAuthController,
+    TwoFactorAuthController
   ],
   providers: [
     StandardAuthService,
     EmailVerificationsService,
     JwtTokensService,
-    AuthUtilsService,
     GoogleAuthService,
-    GoogleHttpService
+    GoogleHttpService,
+    TwoFactorAuthService
   ],
-  exports: [StandardAuthService, EmailVerificationsService, AuthUtilsService]
+  exports: [
+    StandardAuthService,
+    EmailVerificationsService,
+    JwtTokensService
+  ]
 })
 export class AuthModule {}

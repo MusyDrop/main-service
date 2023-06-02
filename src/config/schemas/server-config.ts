@@ -2,6 +2,7 @@ import Joi from 'joi';
 import { NodeEnv } from '../node-env.enum';
 import { LogLevel } from '../../logger/log-level.enum';
 import { JoiConfig } from '../../utils/joi/joiTypes';
+import * as process from 'process';
 
 export interface ServerConfig {
   port: number;
@@ -13,6 +14,7 @@ export interface ServerConfig {
   fullUrl: string;
   isProduction: boolean;
   globalPrefix: string;
+  clientBaseUrl: string;
 }
 
 export const serverConfigSchema = (): JoiConfig<ServerConfig> => ({
@@ -54,6 +56,10 @@ export const serverConfigSchema = (): JoiConfig<ServerConfig> => ({
     value: `${process.env.SERVER_BASE_URL as string}${
       process.env.SERVER_GLOBAL_PREFIX as string
     }`,
+    schema: Joi.string().required()
+  },
+  clientBaseUrl: {
+    value: process.env.CLIENT_BASE_URL as string,
     schema: Joi.string().required()
   }
 });

@@ -31,6 +31,7 @@ export class AuthGuard implements CanActivate {
     }
 
     request.userId = payload.userId;
+    request.email = payload.userEmail;
     request.accessToken = cookies.Auth;
 
     return true;

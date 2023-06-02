@@ -144,4 +144,10 @@ export class JwtTokensService {
       return null;
     }
   }
+
+  public async softDeleteRefreshTokensByUserId(userId: number): Promise<void> {
+    await this.refreshTokensRepository.softDelete({
+      user: { id: userId }
+    });
+  }
 }

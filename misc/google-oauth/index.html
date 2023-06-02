@@ -20,7 +20,8 @@
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/json"
-        }
+        },
+        credentials: 'include'
       });
 
       const parsedRes = await res.json();
@@ -30,6 +31,15 @@
       setTimeout(() => {
         div.innerText = "";
       }, 5000);
+
+
+      const res2 = await fetch("http://localhost:3000/api/main/auth/standard/logout", {
+        method: "POST",
+        credentials: 'include'
+      });
+
+      const parsedRes2 = await res2.json();
+      console.log(parsedRes2);
     }
   };
   const client = google.accounts.oauth2.initCodeClient(params);

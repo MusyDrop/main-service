@@ -27,4 +27,11 @@ export class ProfilesService {
   public async findByIdNullable(id: number): Promise<Profile | null> {
     return await this.profilesRepository.findOneBy({ id });
   }
+
+  public async updateByUserId(
+    userId: number,
+    props: DeepPartial<Profile>
+  ): Promise<void> {
+    await this.profilesRepository.update({ user: { id: userId } }, props);
+  }
 }

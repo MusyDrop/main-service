@@ -30,6 +30,10 @@ export class GoogleAuthService {
     });
 
     if (user) {
+      await this.usersService.updateByEmail(userInfo.email, {
+        isOAuthEnabled: true
+      });
+
       const pair = await this.jwtService.generateTokenPair({
         userId: user.id,
         userEmail: user.email,
@@ -52,7 +56,8 @@ export class GoogleAuthService {
     }
 
     const newUser = await this.usersService.create({
-      email: userInfo.email
+      email: userInfo.email,
+      isOAuthEnabled: true
     });
 
     await this.profilesServices.create({

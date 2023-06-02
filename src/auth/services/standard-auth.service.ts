@@ -8,7 +8,6 @@ import {
 import { UsersService } from '../../users/users.service';
 import { ProfilesService } from '../../users/profiles.service';
 import { SignupDto } from '../dtos/signup.dto';
-import { AuthUtilsService } from './auth-utils.service';
 import { JwtTokensService } from './jwt-tokens.service';
 import { EmailVerificationsService } from './email-verifications.service';
 import { SigninDto } from '../dtos/signin.dto';
@@ -16,13 +15,13 @@ import { SignupInfo } from '../interfaces/signup-info.interface';
 import { SigninInfo } from '../interfaces/signin-info.interface';
 import { AuthGuard } from '../guards/auth.guard';
 import { GeneratedJwt } from '../interfaces/generated-jwt.interface';
+import { comparePasswordCandidate, generateBcryptHash } from "../../utils/other-utils";
 
 @Injectable()
 export class StandardAuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly profilesService: ProfilesService,
-    private readonly authUtilsService: AuthUtilsService,
     private readonly jwtTokensService: JwtTokensService,
     private readonly emailVerificationService: EmailVerificationsService
   ) {}
@@ -36,7 +35,7 @@ export class StandardAuthService {
       throw new BadRequestException('User with such email already exists');
     }
 
-    const passwordHash = await this.authUtilsService.generateBcryptHash(
+    const passwordHash = await generateBcryptHash(
       signupDto.password
     );
 
@@ -94,12 +93,13 @@ export class StandardAuthService {
       throw new BadRequestException('Email or password is incorrect');
     }
 
+    // We create users like that ONLY when third-party identity provider's been used
     if (!user.password) {
       throw new UnprocessableEntityException('Please use your OAuth provider');
     }
 
     const isPasswordCorrect =
-      await this.authUtilsService.comparePasswordCandidate(
+      await comparePasswordCandidate(
         dto.password,
         user.password
       );
@@ -168,5 +168,9 @@ export class StandardAuthService {
       userEmail: user.email,
       roles: []
     });
+  }
+
+  public async logout(userId: number): Promise<void> {
+    await this.jwtTokensService.softDeleteRefreshTokensByUserId(userId);
   }
 }

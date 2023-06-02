@@ -13,6 +13,8 @@ export interface AuthConfig {
 
   googleClientId: string;
   googleClientSecret: string;
+
+  twoFactorAuthAppName: string;
 }
 
 export const authConfigSchema = (): JoiConfig<AuthConfig> => ({
@@ -48,6 +50,10 @@ export const authConfigSchema = (): JoiConfig<AuthConfig> => ({
   },
   googleClientSecret: {
     value: process.env.AUTH_GOOGLE_CLIENT_SECRET as string,
+    schema: Joi.string().required()
+  },
+  twoFactorAuthAppName: {
+    value: process.env.AUTH_2FA_APP_NAME as string,
     schema: Joi.string().required()
   }
 });
