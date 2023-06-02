@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  UnprocessableEntityException
+} from '@nestjs/common';
 import { GeneratedTwoFactorCredentials } from '../interfaces/generated-2fa-credentials.interface';
 import { authenticator } from 'otplib';
 import { ExtendedConfigService } from '../../config/extended-config.service';
@@ -39,5 +43,25 @@ export class TwoFactorAuthService {
     url: string
   ): Promise<void> {
     await toFileStream(stream, url);
+  }
+
+  public async enableTwoFactorAuth(
+    userId: number,
+    authCode: string
+  ): Promise<void> {
+    const user = await this.usersService.findOne({ id: userId });
+
+    const valid = authenticator.verify({
+      secret: user.twoFactorAuthSecret as string, // user has generated secret at this point
+      token: authCode
+    });
+
+    if (!valid) {
+      throw new UnauthorizedException('Invalid 2FA code');
+    }
+
+    await this.usersService.updateById(userId, {
+      isTwoFactorEnabled: true
+    });
   }
 }
