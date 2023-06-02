@@ -38,7 +38,8 @@ export class GoogleAuthService {
         userId: user.id,
         userEmail: user.email,
         userGuid: user.guid,
-        roles: []
+        roles: [],
+        isTwoFactorAuthGranted: false
       });
 
       return {
@@ -72,7 +73,8 @@ export class GoogleAuthService {
       userId: user.id,
       userEmail: user.email,
       userGuid: user.guid,
-      roles: []
+      roles: [],
+      isTwoFactorAuthGranted: false
     });
 
     return {

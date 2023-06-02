@@ -41,7 +41,7 @@ export class User {
   twoFactorAuthSecret?: string;
 
   @Column({ default: false })
-  isTwoFactorEnabled: boolean;
+  isTwoFactorAuthEnabled: boolean;
 
   @OneToOne(() => Profile, (profile) => profile.user, { nullable: false })
   profile: Profile;

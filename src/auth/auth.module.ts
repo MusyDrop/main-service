@@ -37,10 +37,6 @@ import { TwoFactorAuthService } from './services/two-factor-auth.service';
     GoogleHttpService,
     TwoFactorAuthService
   ],
-  exports: [
-    StandardAuthService,
-    EmailVerificationsService,
-    JwtTokensService
-  ]
+  exports: [StandardAuthService, EmailVerificationsService, JwtTokensService]
 })
 export class AuthModule {}

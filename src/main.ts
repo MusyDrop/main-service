@@ -12,9 +12,9 @@ async function bootstrap(): Promise<void> {
   const configService = app.get<ExtendedConfigService>(ExtendedConfigService);
   const globalPrefix = configService.get('server.globalPrefix');
 
+  app.use(cookieParser());
   app.useLogger(logger);
   app.setGlobalPrefix(globalPrefix);
-  app.use(cookieParser());
   app.useGlobalPipes(
     new ValidationPipe({
       // transforms if @Type() decorator is specified in dtos

@@ -2,8 +2,7 @@ import {
   BadRequestException,
   Injectable,
   UnauthorizedException,
-  UnprocessableEntityException,
-  UseGuards
+  UnprocessableEntityException
 } from '@nestjs/common';
 import { UsersService } from '../../users/users.service';
 import { ProfilesService } from '../../users/profiles.service';
@@ -13,9 +12,11 @@ import { EmailVerificationsService } from './email-verifications.service';
 import { SigninDto } from '../dtos/signin.dto';
 import { SignupInfo } from '../interfaces/signup-info.interface';
 import { SigninInfo } from '../interfaces/signin-info.interface';
-import { AuthGuard } from '../guards/auth.guard';
 import { GeneratedJwt } from '../interfaces/generated-jwt.interface';
-import { comparePasswordCandidate, generateBcryptHash } from "../../utils/other-utils";
+import {
+  comparePasswordCandidate,
+  generateBcryptHash
+} from '../../utils/other-utils';
 
 @Injectable()
 export class StandardAuthService {
@@ -35,9 +36,7 @@ export class StandardAuthService {
       throw new BadRequestException('User with such email already exists');
     }
 
-    const passwordHash = await generateBcryptHash(
-      signupDto.password
-    );
+    const passwordHash = await generateBcryptHash(signupDto.password);
 
     const user = await this.usersService.create({
       email: signupDto.email,
@@ -63,6 +62,7 @@ export class StandardAuthService {
       userId: user.id,
       userEmail: user.email,
       userGuid: user.guid,
+      isTwoFactorAuthGranted: false,
       roles: []
     });
 
@@ -98,11 +98,10 @@ export class StandardAuthService {
       throw new UnprocessableEntityException('Please use your OAuth provider');
     }
 
-    const isPasswordCorrect =
-      await comparePasswordCandidate(
-        dto.password,
-        user.password
-      );
+    const isPasswordCorrect = await comparePasswordCandidate(
+      dto.password,
+      user.password
+    );
 
     if (!isPasswordCorrect) {
       throw new BadRequestException('Email or password is incorrect');
@@ -131,6 +130,7 @@ export class StandardAuthService {
       userId: user.id,
       userEmail: user.email,
       userGuid: user.guid,
+      isTwoFactorAuthGranted: false,
       roles: []
     });
 
@@ -145,7 +145,7 @@ export class StandardAuthService {
     };
   }
 
-  public async refresh(
+  public async refreshAccessToken(
     userId: number,
     refreshToken: string
   ): Promise<GeneratedJwt> {
@@ -166,6 +166,7 @@ export class StandardAuthService {
       userId,
       userGuid: user.guid,
       userEmail: user.email,
+      isTwoFactorAuthGranted: token.isTwoFactorAuthGranted, // generated access token with the same grant
       roles: []
     });
   }

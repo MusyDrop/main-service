@@ -9,11 +9,8 @@ import { ParsedCookiesPayload } from '../interfaces/parsed-cookies-payload.inter
 import { JwtTokensService } from '../services/jwt-tokens.service';
 import { UsersService } from '../../users/users.service';
 
-/**
- * Used only for refresh token requiring routes so far
- */
 @Injectable()
-export class AuthRefreshGuard implements CanActivate {
+export class AuthTwoFactorGuard implements CanActivate {
   constructor(
     private readonly jwtTokensService: JwtTokensService,
     private readonly usersService: UsersService
@@ -23,34 +20,26 @@ export class AuthRefreshGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<Request>();
     const cookies = request.cookies as ParsedCookiesPayload;
 
-    if (!cookies.Refresh) {
+    if (!cookies.Auth) {
       throw new UnauthorizedException(
         'Please log in in order to continue using this API'
       );
     }
 
-    const payload = await this.jwtTokensService.verifyRefreshToken(
-      cookies.Refresh
-    );
+    const payload = await this.jwtTokensService.verifyAccessToken(cookies.Auth);
 
     if (!payload) {
       throw new UnauthorizedException(
-        'Invalid refresh token passed, please provide a valid one'
-      );
-    }
-    const refreshToken = await this.jwtTokensService.findRefreshTokenNullable({
-      token: cookies.Refresh
-    });
-
-    // Not found either because it doesn't exist in the DB (should not happen)
-    // Or it was softly deleted (the only case, otherwise secret was stolen :))
-    if (!refreshToken) {
-      throw new UnauthorizedException(
-        'Invalid refresh token passed, please provide a valid one'
+        'Invalid access token passed, please provide a valid one'
       );
     }
 
     const user = await this.usersService.findOne({ id: payload.userId });
+
+    // if 2fa enabled and token, but token wasn't granted such permission
+    if (user.isTwoFactorAuthEnabled && !payload.isTwoFactorAuthGranted) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
 
     request.user = user;
 

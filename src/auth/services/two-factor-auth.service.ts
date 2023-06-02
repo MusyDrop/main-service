@@ -7,14 +7,16 @@ import { GeneratedTwoFactorCredentials } from '../interfaces/generated-2fa-crede
 import { authenticator } from 'otplib';
 import { ExtendedConfigService } from '../../config/extended-config.service';
 import { UsersService } from '../../users/users.service';
-import { Writable } from 'node:stream';
-import { toFileStream } from 'qrcode';
+import { TwoFactorEnableInfo } from '../interfaces/two-factor-enable-info.interface';
+import { JwtTokensService } from './jwt-tokens.service';
+import { SigninInfo } from '../interfaces/signin-info.interface';
 
 @Injectable()
 export class TwoFactorAuthService {
   constructor(
     private readonly config: ExtendedConfigService,
-    private readonly usersService: UsersService
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtTokensService
   ) {}
 
   public async generateTwoFactorAuthSecret(
@@ -38,18 +40,27 @@ export class TwoFactorAuthService {
     };
   }
 
-  public async pipeOtpAuthUrlToStream(
-    stream: Writable,
-    url: string
-  ): Promise<void> {
-    await toFileStream(stream, url);
-  }
-
   public async enableTwoFactorAuth(
     userId: number,
     authCode: string
-  ): Promise<void> {
-    const user = await this.usersService.findOne({ id: userId });
+  ): Promise<TwoFactorEnableInfo> {
+    const signinInfo = await this.singin(userId, authCode);
+
+    await this.usersService.updateById(userId, {
+      isTwoFactorAuthEnabled: true
+    });
+
+    return signinInfo;
+  }
+
+  public async singin(userId: number, authCode: string): Promise<SigninInfo> {
+    const user = await this.usersService.findOneWithProfile({ id: userId });
+
+    if (!user.twoFactorAuthSecret) {
+      throw new UnprocessableEntityException(
+        'Please, register our app in the OTP provider'
+      );
+    }
 
     const valid = authenticator.verify({
       secret: user.twoFactorAuthSecret as string, // user has generated secret at this point
@@ -60,8 +71,24 @@ export class TwoFactorAuthService {
       throw new UnauthorizedException('Invalid 2FA code');
     }
 
-    await this.usersService.updateById(userId, {
-      isTwoFactorEnabled: true
+    const pair = await this.jwtService.generateTokenPair({
+      userId: user.id,
+      userEmail: user.email,
+      userGuid: user.guid,
+      isTwoFactorAuthGranted: true,
+      roles: []
     });
+
+    return {
+      user,
+
+      accessToken: pair.accessToken,
+      accessTokenExpiresAt: pair.accessTokenExpiresAt,
+      accessTokenCookie: pair.accessTokenCookie,
+
+      refreshToken: pair.refreshToken,
+      refreshTokenExpiresAt: pair.refreshTokenExpiresAt,
+      refreshTokenCookie: pair.refreshTokenCookie
+    };
   }
 }

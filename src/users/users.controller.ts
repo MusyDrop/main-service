@@ -4,18 +4,19 @@ import { AuthGuard } from '../auth/guards/auth.guard';
 import { Request } from 'express';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from './dto/user.dto';
+import { AuthTwoFactorGuard } from '../auth/guards/auth-two-factor.guard';
 
 @Controller('/users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @UseGuards(AuthGuard)
+  @UseGuards(AuthTwoFactorGuard)
   @Patch('/')
   public async update(
     @Req() req: Request,
     @Body() body: UpdateUserDto
   ): Promise<UserDto> {
-    const user = await this.usersService.updateByIdAndReturn(req.userId, body);
+    const user = await this.usersService.updateByIdAndReturn(req.user.id, body);
     return {
       guid: user.guid,
       email: user.email,

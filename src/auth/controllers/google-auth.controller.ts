@@ -15,6 +15,8 @@ export class GoogleAuthController {
   ): Promise<SignupResponseDto> {
     const signupInfo = await this.googleAuthService.signup(body.authCode);
 
+    res.clearCookie('Auth');
+    res.clearCookie('Refresh');
     res.setHeader('Set-Cookie', [
       signupInfo.accessTokenCookie,
       signupInfo.refreshTokenCookie

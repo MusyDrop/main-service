@@ -38,6 +38,8 @@ export class StandardAuthController {
   ): Promise<SigninResponseDto> {
     const signinInfo = await this.standardAuthService.signin(body);
 
+    res.clearCookie('Auth');
+    res.clearCookie('Refresh');
     res.setHeader('Set-Cookie', [
       signinInfo.accessTokenCookie,
       signinInfo.refreshTokenCookie
@@ -64,11 +66,12 @@ export class StandardAuthController {
     @Res({ passthrough: true })
     res: express.Response
   ): Promise<SuccessResponseDto> {
-    const generatedJwt = await this.standardAuthService.refresh(
-      req.userId,
+    const generatedJwt = await this.standardAuthService.refreshAccessToken(
+      req.user.id,
       req.refreshToken
     );
 
+    res.clearCookie('Auth');
     res.setHeader('Set-Cookie', [generatedJwt.cookie]);
 
     return new SuccessResponseDto('Refresh of access token');
@@ -77,7 +80,7 @@ export class StandardAuthController {
   @UseGuards(AuthGuard)
   @Post('/logout')
   public async logout(@Req() req: Request): Promise<SuccessResponseDto> {
-    await this.standardAuthService.logout(req.userId);
+    await this.standardAuthService.logout(req.user.id);
     return new SuccessResponseDto('Logout');
   }
 }

@@ -1,8 +1,6 @@
-export interface JwtPayload {
-  userId: number;
-  userGuid: string;
-  userEmail: string;
+import { SignJwtPayload } from './sign-jwt-payload.interface';
+
+export interface JwtPayload extends SignJwtPayload {
   expiresAt: Date;
   issuedAt: Date;
-  roles: string[];
 }

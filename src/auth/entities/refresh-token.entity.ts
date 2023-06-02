@@ -26,6 +26,9 @@ export class RefreshToken {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
+  @Column({ default: false })
+  isTwoFactorAuthGranted: boolean;
+
   @Column({ name: 'expires_at' })
   expiresAt: Date;
 

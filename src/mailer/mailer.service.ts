@@ -32,7 +32,7 @@ export class MailerService {
     const base = this.config.get('server.fullUrl');
 
     const payload: VerificationEmailPayload = {
-      verificationLink: `${base}/email-verifications/verify?guid=${verificationGuid}`,
+      verificationLink: `${base}/auth/email-verifications/verify?guid=${verificationGuid}`,
       serverHealthEndpoint: `${base}/health`
     };
 

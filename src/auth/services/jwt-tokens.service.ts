@@ -8,6 +8,7 @@ import { ExtendedConfigService } from '../../config/extended-config.service';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
 import { GeneratedJwt } from '../interfaces/generated-jwt.interface';
 import { JwtPair } from '../interfaces/jwt-pair.interface';
+import { SignJwtPayload } from '../interfaces/sign-jwt-payload.interface';
 
 @Injectable()
 export class JwtTokensService {
@@ -27,9 +28,7 @@ export class JwtTokensService {
     });
   }
 
-  public generateAccessToken(
-    payload: Omit<JwtPayload, 'expiresAt' | 'issuedAt'>
-  ): GeneratedJwt {
+  public generateAccessToken(payload: SignJwtPayload): GeneratedJwt {
     const expiresSecs = this.config.get('auth.accessTokenExpiresInSec');
     const issuedAt = new Date();
     const expiresAt = addSeconds(issuedAt, expiresSecs);
@@ -56,7 +55,7 @@ export class JwtTokensService {
   }
 
   public async generateRefreshToken(
-    payload: Omit<JwtPayload, 'expiresAt' | 'issuedAt'>
+    payload: SignJwtPayload
   ): Promise<GeneratedJwt> {
     // soft delete all other refresh tokens
     await this.refreshTokensRepository.softDelete({
@@ -80,6 +79,7 @@ export class JwtTokensService {
     );
 
     await this.refreshTokensRepository.save({
+      isTwoFactorAuthGranted: payload.isTwoFactorAuthGranted,
       token,
       expiresAt,
       user: { id: payload.userId }
@@ -94,9 +94,7 @@ export class JwtTokensService {
     };
   }
 
-  public async generateTokenPair(
-    payload: Omit<JwtPayload, 'expiresAt' | 'issuedAt'>
-  ): Promise<JwtPair> {
+  public async generateTokenPair(payload: SignJwtPayload): Promise<JwtPair> {
     const {
       token: accessToken,
       expiresAt: accessTokenExpiresAt,

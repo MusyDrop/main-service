@@ -1,4 +1,5 @@
 declare namespace Express {
+  import { User } from '../../users/entities/user.entity';
   import { startTime } from 'pino-http';
   import { ParsedCookiesPayload } from '../../auth/interfaces/parsed-cookies-payload.interface';
 
@@ -18,8 +19,7 @@ declare namespace Express {
     /**
      * Set by Auth Guards
      */
-    userId?: number;
-    email?: string;
+    user?: User;
     accessToken?: string;
     refreshToken?: string;
   }
