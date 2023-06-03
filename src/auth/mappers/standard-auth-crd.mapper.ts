@@ -7,7 +7,7 @@ import { SignupResponseDto } from '../dtos/response/signup-response.dto';
 import { SigninInfo } from '../interfaces/signin-info.interface';
 import { User } from '../../users/entities/user.entity';
 import { SignupInfo } from '../interfaces/signup-info.interface';
-import { UserDto } from "../../users/dto/user.dto";
+import { UserDto } from '../../users/dto/user.dto';
 
 @Injectable()
 export class StandardAuthCrdMapper

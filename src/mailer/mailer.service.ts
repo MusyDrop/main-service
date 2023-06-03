@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import mailer from '@sendgrid/mail';
 import { ExtendedConfigService } from '../config/extended-config.service';
 import { VerificationEmailPayload } from './interfaces/verification-email.interface';
-import { AnyObject } from "../utils/utility-types";
+import { AnyObject } from '../utils/utility-types';
 
 @Injectable()
 export class MailerService {
