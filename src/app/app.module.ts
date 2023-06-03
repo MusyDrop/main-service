@@ -9,6 +9,7 @@ import { AuthModule } from '../auth/auth.module';
 import { UsersModule } from '../users/users.module';
 import { DbModule } from '../db/db.module';
 import { MetadataMiddleware } from '../common/middlewares/metadata.middleware';
+import { ProjectsModule } from '../projects/projects.module';
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { MetadataMiddleware } from '../common/middlewares/metadata.middleware';
     AuthModule,
     UsersModule,
     MailerModule,
-    DbModule
+    DbModule,
+    ProjectsModule
   ],
   controllers: [AppController],
   providers: [AppService]

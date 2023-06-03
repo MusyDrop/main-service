@@ -27,7 +27,7 @@ export class Profile {
   @Column({ nullable: true })
   phone: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, name: 'profile_picture_url' })
   profilePictureUrl: string;
 
   @OneToOne(() => User, (user) => user.profile, {

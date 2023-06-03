@@ -31,16 +31,16 @@ export class User {
   /**
    * Is authenticated by using google oauth identity provider
    */
-  @Column({ default: false })
+  @Column({ default: false, name: 'is_oauth_enabled' })
   isOAuthEnabled: boolean;
 
   /**
    * Used for 2FA
    */
-  @Column({ nullable: true })
+  @Column({ nullable: true, name: 'two_factor_auth_secret' })
   twoFactorAuthSecret?: string;
 
-  @Column({ default: false })
+  @Column({ default: false, name: 'is_two_factor_auth_enabled' })
   isTwoFactorAuthEnabled: boolean;
 
   @OneToOne(() => Profile, (profile) => profile.user, { nullable: false })
