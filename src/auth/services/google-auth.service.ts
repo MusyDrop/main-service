@@ -65,14 +65,14 @@ export class GoogleAuthService {
       firstName: userInfo.given_name,
       lastName: userInfo.family_name,
       country: userInfo.locale,
-      user: { id: user.id },
+      user: { id: newUser.id },
       profilePictureUrl: userInfo.picture
     });
 
     const pair = await this.jwtService.generateTokenPair({
-      userId: user.id,
-      userEmail: user.email,
-      userGuid: user.guid,
+      userId: newUser.id,
+      userEmail: newUser.email,
+      userGuid: newUser.guid,
       roles: [],
       isTwoFactorAuthGranted: false
     });
