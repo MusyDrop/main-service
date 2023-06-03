@@ -9,6 +9,7 @@ import {
   UpdateDateColumn
 } from 'typeorm';
 import { Profile } from './profile.entity';
+import { UserDto } from '../dto/user.dto';
 
 @Entity({ name: 'users' })
 export class User {
@@ -54,4 +55,16 @@ export class User {
 
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt?: Date;
+
+  public static toDto(user?: User): UserDto | null {
+    if (!user) return null;
+
+    return {
+      guid: user.guid,
+      email: user.email,
+      isOAuthEnabled: user.isOAuthEnabled,
+      isTwoFactorAuthEnabled: user.isTwoFactorAuthEnabled,
+      profile: Profile.toDto(user.profile) as Profile
+    };
+  }
 }

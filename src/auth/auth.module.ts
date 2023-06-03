@@ -15,6 +15,9 @@ import { GoogleAuthService } from './services/google-auth.service';
 import { GoogleHttpService } from './services/google-http.service';
 import { TwoFactorAuthController } from './controllers/two-factor-auth.controller';
 import { TwoFactorAuthService } from './services/two-factor-auth.service';
+import { GoogleAuthCrdMapper } from './mappers/google-auth-crd.mapper';
+import { StandardAuthCrdMapper } from './mappers/standard-auth-crd.mapper';
+import { TwoFactorAuthCrdMapper } from './mappers/two-factor-auth-crd.mapper';
 
 @Module({
   imports: [
@@ -35,8 +38,16 @@ import { TwoFactorAuthService } from './services/two-factor-auth.service';
     JwtTokensService,
     GoogleAuthService,
     GoogleHttpService,
-    TwoFactorAuthService
+    TwoFactorAuthService,
+    GoogleAuthCrdMapper,
+    StandardAuthCrdMapper,
+    TwoFactorAuthCrdMapper
   ],
-  exports: [StandardAuthService, EmailVerificationsService, JwtTokensService]
+  exports: [
+    StandardAuthService,
+    EmailVerificationsService,
+    JwtTokensService,
+    UsersModule
+  ]
 })
 export class AuthModule {}

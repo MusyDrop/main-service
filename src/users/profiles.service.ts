@@ -20,7 +20,7 @@ export class ProfilesService {
       lastName: profileProps.lastName,
       country: profileProps.country,
       phone: profileProps.phone,
-      user: { id: profileProps.user.id }
+      user: { id: profileProps.user?.id }
     });
   }
 

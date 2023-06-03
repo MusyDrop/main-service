@@ -16,19 +16,19 @@ import express, { Request, Response } from 'express';
 import { SuccessResponseDto } from '../../common/dtos/success-response.dto';
 import { AuthRefreshGuard } from '../guards/auth-refresh.guard';
 import { AuthGuard } from '../guards/auth.guard';
+import { StandardAuthCrdMapper } from '../mappers/standard-auth-crd.mapper';
 
 @Controller('/auth/standard')
 export class StandardAuthController {
-  constructor(private readonly standardAuthService: StandardAuthService) {}
+  constructor(
+    private readonly standardAuthService: StandardAuthService,
+    private readonly responseMapper: StandardAuthCrdMapper
+  ) {}
 
   @Post('/signup')
   public async signup(@Body() body: SignupDto): Promise<SignupResponseDto> {
     const signupInfo = await this.standardAuthService.signup(body);
-
-    return {
-      email: signupInfo.email,
-      userGuid: signupInfo.userGuid
-    };
+    return this.responseMapper.signupMapper(signupInfo);
   }
 
   @Post('/signin')
@@ -37,26 +37,13 @@ export class StandardAuthController {
     @Res({ passthrough: true }) res: Response
   ): Promise<SigninResponseDto> {
     const signinInfo = await this.standardAuthService.signin(body);
-
     res.clearCookie('Auth');
     res.clearCookie('Refresh');
     res.setHeader('Set-Cookie', [
       signinInfo.accessTokenCookie,
       signinInfo.refreshTokenCookie
     ]);
-
-    return {
-      user: {
-        email: signinInfo.user.email,
-        guid: signinInfo.user.guid,
-        profile: {
-          firstName: signinInfo.user.profile.firstName,
-          lastName: signinInfo.user.profile.lastName,
-          phone: signinInfo.user.profile.phone,
-          country: signinInfo.user.profile.country
-        }
-      }
-    };
+    return this.responseMapper.signinMapper(signinInfo);
   }
 
   @UseGuards(AuthRefreshGuard)
@@ -68,19 +55,22 @@ export class StandardAuthController {
   ): Promise<SuccessResponseDto> {
     const generatedJwt = await this.standardAuthService.refreshAccessToken(
       req.user.id,
-      req.refreshToken
+      req.refreshToken as string
     );
-
     res.clearCookie('Auth');
     res.setHeader('Set-Cookie', [generatedJwt.cookie]);
-
-    return new SuccessResponseDto('Refresh of access token');
+    return this.responseMapper.refreshMapper();
   }
 
   @UseGuards(AuthGuard)
   @Post('/logout')
-  public async logout(@Req() req: Request): Promise<SuccessResponseDto> {
+  public async logout(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response
+  ): Promise<SuccessResponseDto> {
     await this.standardAuthService.logout(req.user.id);
-    return new SuccessResponseDto('Logout');
+    res.clearCookie('Auth');
+    res.clearCookie('Refresh');
+    return this.responseMapper.logoutMapper();
   }
 }

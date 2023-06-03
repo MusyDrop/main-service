@@ -1,5 +1,5 @@
 import Joi, { SchemaMap } from 'joi';
-import { AnyObject } from '../types';
+import { AnyObject } from '../utility-types';
 import { JoiConfig, JoiConfigProps } from './joiTypes';
 
 // TODO: Move to generic library

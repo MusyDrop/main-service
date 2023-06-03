@@ -47,9 +47,7 @@ export class UsersService {
     });
   }
 
-  public async findOneWithProfile(
-    props: DeepPartial<User>
-  ): Promise<User | null> {
+  public async findOneWithProfile(props: DeepPartial<User>): Promise<User> {
     const user = await this.usersRepository.findOne({
       relations: {
         profile: true

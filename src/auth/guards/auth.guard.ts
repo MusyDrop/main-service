@@ -19,7 +19,7 @@ export class AuthGuard implements CanActivate {
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
     const cookies = request.cookies as ParsedCookiesPayload;
-    console.log(request.headers);
+
     if (!cookies.Auth) {
       throw new UnauthorizedException(
         'Please log in in order to continue using this API'
@@ -37,6 +37,7 @@ export class AuthGuard implements CanActivate {
     const user = await this.usersService.findOne({ id: payload.userId });
 
     request.user = user;
+    request.accessToken = cookies.Auth;
 
     return true;
   }

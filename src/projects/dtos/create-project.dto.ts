@@ -7,4 +7,6 @@ export class CreateProjectDto {
 
   @IsUUID()
   templateId: string;
+
+  asd: number;
 }

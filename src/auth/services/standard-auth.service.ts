@@ -72,8 +72,7 @@ export class StandardAuthService {
     );
 
     return {
-      email: user.email,
-      userGuid: user.guid,
+      user,
 
       accessToken,
       accessTokenExpiresAt,

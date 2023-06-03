@@ -7,10 +7,14 @@ import { EnableTwoFactorAuthDto } from '../dtos/enable-two-factor-auth.dto';
 import { toFileStream } from 'qrcode';
 import { SigninTwoFactorDto } from '../dtos/signin-two-factor.dto';
 import { SigninResponseDto } from '../dtos/response/signin-response.dto';
+import { TwoFactorAuthCrdMapper } from '../mappers/two-factor-auth-crd.mapper';
 
 @Controller('/auth/2fa')
 export class TwoFactorAuthController {
-  constructor(private readonly twoFactorAuthService: TwoFactorAuthService) {}
+  constructor(
+    private readonly twoFactorAuthService: TwoFactorAuthService,
+    private readonly responseMapper: TwoFactorAuthCrdMapper
+  ) {}
 
   @UseGuards(AuthGuard)
   @Post('/generate')
@@ -26,7 +30,7 @@ export class TwoFactorAuthController {
     res.setHeader('content-type', 'image/png');
     await toFileStream(res, otpAuthUrl);
 
-    return new SuccessResponseDto('2FA QR-code generation');
+    return this.responseMapper.generateMapper();
   }
 
   @UseGuards(AuthGuard)
@@ -49,7 +53,7 @@ export class TwoFactorAuthController {
       enableTwoFactorAuthInfo.refreshTokenCookie
     ]);
 
-    return new SuccessResponseDto('Enabling 2FA');
+    return this.responseMapper.enableMapper();
   }
 
   @UseGuards(AuthGuard)
@@ -70,17 +74,6 @@ export class TwoFactorAuthController {
       signinInfo.refreshTokenCookie
     ]);
 
-    return {
-      user: {
-        email: signinInfo.user.email,
-        guid: signinInfo.user.guid,
-        profile: {
-          firstName: signinInfo.user.profile.firstName,
-          lastName: signinInfo.user.profile.lastName,
-          phone: signinInfo.user.profile.phone,
-          country: signinInfo.user.profile.country
-        }
-      }
-    };
+    return this.responseMapper.signinMapper(signinInfo);
   }
 }

@@ -53,6 +53,7 @@ export class AuthRefreshGuard implements CanActivate {
     const user = await this.usersService.findOne({ id: payload.userId });
 
     request.user = user;
+    request.refreshToken = refreshToken.token;
 
     return true;
   }

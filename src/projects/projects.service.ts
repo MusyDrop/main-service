@@ -12,14 +12,17 @@ import { CreateProjectDto } from './dtos/create-project.dto';
 export class ProjectsService {
   constructor(
     @InjectRepository(Project)
-    private readonly projectsRepository: Repository<Project>
+    protected readonly projectsRepository: Repository<Project>
   ) {}
 
   public async create(
     userId: number,
     props: CreateProjectDto
   ): Promise<Project> {
-    const existingProject = await this.projectsRepository;
+    const existingProject = await this.findOneNullable({
+      user: { id: userId },
+      name: props.name
+    });
 
     if (existingProject) {
       throw new UnprocessableEntityException(
@@ -28,7 +31,8 @@ export class ProjectsService {
     }
 
     return await this.projectsRepository.save({
-      ...props,
+      name: props.name,
+      templateId: props.templateId,
       user: { id: userId }
     });
   }
@@ -52,5 +56,21 @@ export class ProjectsService {
     }
 
     return project;
+  }
+
+  public async findAllByUserId(userId: number): Promise<Project[]> {
+    return await this.projectsRepository.findBy({
+      user: { id: userId }
+    });
+  }
+
+  public async update(
+    userId: number,
+    props: DeepPartial<Project>
+  ): Promise<Project> {
+    return await this.projectsRepository.save({
+      ...props,
+      user: { id: userId }
+    });
   }
 }

@@ -1,6 +1,7 @@
+import { User } from '../../users/entities/user.entity';
+
 export interface SignupInfo {
-  email: string;
-  userGuid: string;
+  user: User;
 
   accessToken: string;
   accessTokenExpiresAt: Date;

@@ -1,12 +1,17 @@
-import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
+import { Body, Controller, Post, Res } from '@nestjs/common';
 import { GoogleSignupDto } from '../dtos/google-signup.dto';
 import { GoogleAuthService } from '../services/google-auth.service';
 import { Response } from 'express';
 import { SignupResponseDto } from '../dtos/response/signup-response.dto';
+import { ResponseDtoMappable } from '../../common/response-dto-mappable.interface';
+import { GoogleAuthCrdMapper } from '../mappers/google-auth-crd.mapper';
 
 @Controller('/auth/google')
-export class GoogleAuthController {
-  constructor(private readonly googleAuthService: GoogleAuthService) {}
+export class GoogleAuthController implements ResponseDtoMappable {
+  constructor(
+    private readonly googleAuthService: GoogleAuthService,
+    public readonly responseDtoMapper: GoogleAuthCrdMapper
+  ) {}
 
   @Post('/signup')
   public async signup(
@@ -22,9 +27,6 @@ export class GoogleAuthController {
       signupInfo.refreshTokenCookie
     ]);
 
-    return {
-      email: signupInfo.email,
-      userGuid: signupInfo.userGuid
-    };
+    return this.responseDtoMapper.signupMapper(signupInfo);
   }
 }

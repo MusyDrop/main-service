@@ -10,5 +10,5 @@ export class UpdateUserDto {
 
   @Type(() => UpdateProfileDto)
   @IsOptional()
-  profile?: UpdateProfileDto = {};
+  profile: UpdateProfileDto = {};
 }

@@ -42,6 +42,7 @@ export class AuthTwoFactorGuard implements CanActivate {
     }
 
     request.user = user;
+    request.accessToken = cookies.Auth;
 
     return true;
   }

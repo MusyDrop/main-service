@@ -1,5 +1,5 @@
 import { Schema } from 'joi';
-import { AnyObject } from '../types';
+import { AnyObject } from '../utility-types';
 
 export type JoiConfigProps<ValueType> = {
   value: ValueType;

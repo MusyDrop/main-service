@@ -9,7 +9,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
-import { ProjectSettings } from '../project-settings.interface';
+import { ProjectSettings } from '../interfaces/project-settings.interface';
 import { User } from '../../users/entities/user.entity';
 import { ProjectDto } from '../dtos/project.dto';
 
@@ -48,14 +48,15 @@ export class Project {
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt?: Date;
 
-  public toDto(): ProjectDto {
+  public static toDto(project?: Project): ProjectDto | null {
+    if (!project) return null;
     return {
-      guid: this.guid,
-      name: this.name,
-      templateId: this.templateId,
+      guid: project.guid,
+      name: project.name,
+      templateId: project.templateId,
 
-      createdAt: this.createdAt,
-      updatedAt: this.updatedAt
+      createdAt: project.createdAt,
+      updatedAt: project.updatedAt
     };
   }
 }

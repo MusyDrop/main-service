@@ -1,7 +1,6 @@
 import Joi from 'joi';
 import { JoiConfig } from '../../utils/joi/joiTypes';
 import * as process from 'process';
-import { AnyObject } from '../../utils/types';
 
 export interface AuthConfig {
   accessTokenSecret: string;

@@ -5,10 +5,14 @@ import { Request } from 'express';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from './dto/user.dto';
 import { AuthTwoFactorGuard } from '../auth/guards/auth-two-factor.guard';
+import { UsersCrdMapper } from './mappers/users-crd.mapper';
 
 @Controller('/users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly responseMapper: UsersCrdMapper
+  ) {}
 
   @UseGuards(AuthTwoFactorGuard)
   @Patch('/')
@@ -17,16 +21,6 @@ export class UsersController {
     @Body() body: UpdateUserDto
   ): Promise<UserDto> {
     const user = await this.usersService.updateByIdAndReturn(req.user.id, body);
-    return {
-      guid: user.guid,
-      email: user.email,
-
-      profile: {
-        firstName: user.profile.firstName,
-        lastName: user.profile.lastName,
-        country: user.profile.country,
-        phone: user.profile.phone
-      }
-    };
+    return this.responseMapper.updateMapper(user);
   }
 }

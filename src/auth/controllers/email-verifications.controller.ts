@@ -16,10 +16,4 @@ export class EmailVerificationsController {
     await this.emailVerificationsService.verify(query.guid);
     return new SuccessResponseDto('Email Verification');
   }
-
-  // // TODO: Guard this route
-  // @Post('/resend')
-  // public async resend(): Promise<void> {
-  //   await this.emailVerificationsService.sendEmailVerification()
-  // }
 }
