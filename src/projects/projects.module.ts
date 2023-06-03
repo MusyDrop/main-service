@@ -5,9 +5,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { AuthModule } from '../auth/auth.module';
 import { ProjectsCrdMapper } from './projects-crd.mapper';
+import { S3Module } from '../s3/s3.module';
+import { ConfigModule } from '../config/config.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Project]), AuthModule],
+  imports: [
+    TypeOrmModule.forFeature([Project]),
+    AuthModule,
+    S3Module,
+    ConfigModule
+  ],
   controllers: [ProjectsController],
   providers: [ProjectsService, ProjectsCrdMapper]
 })

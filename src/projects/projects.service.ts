@@ -7,12 +7,17 @@ import { DeepPartial, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { CreateProjectDto } from './dtos/create-project.dto';
+import { generateUniqueId } from '../utils/unique-id-generator';
+import { S3Service } from '../s3/s3.service';
+import { ExtendedConfigService } from '../config/extended-config.service';
 
 @Injectable()
 export class ProjectsService {
   constructor(
     @InjectRepository(Project)
-    protected readonly projectsRepository: Repository<Project>
+    private readonly projectsRepository: Repository<Project>,
+    private readonly s3Service: S3Service,
+    private readonly config: ExtendedConfigService
   ) {}
 
   public async create(
@@ -64,7 +69,7 @@ export class ProjectsService {
     });
   }
 
-  public async update(
+  public async updateByUserId(
     userId: number,
     props: DeepPartial<Project>
   ): Promise<Project> {
@@ -72,5 +77,39 @@ export class ProjectsService {
       ...props,
       user: { id: userId }
     });
+  }
+
+  public async update(props: DeepPartial<Project>): Promise<Project> {
+    return await this.projectsRepository.save({
+      id: props.id,
+      guid: props.guid,
+      name: props.name,
+      templateId: props.templateId,
+      audioFileName: props.audioFileName
+    });
+  }
+
+  /**
+   * @returns generated audio file name
+   * @param guid
+   * @param audioFile
+   */
+  public async uploadAudioFile(
+    guid: string,
+    audioFile: Buffer
+  ): Promise<string> {
+    const audioFileName = await this.s3Service.putObject(
+      this.config.get('minio.buckets.audioFilesBucket'),
+      audioFile
+    );
+
+    const project = await this.findOne({ guid });
+
+    await this.update({
+      id: project.id,
+      audioFileName
+    });
+
+    return audioFileName;
   }
 }

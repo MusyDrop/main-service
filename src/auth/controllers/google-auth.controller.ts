@@ -3,11 +3,10 @@ import { GoogleSignupDto } from '../dtos/google-signup.dto';
 import { GoogleAuthService } from '../services/google-auth.service';
 import { Response } from 'express';
 import { SignupResponseDto } from '../dtos/response/signup-response.dto';
-import { ResponseDtoMappable } from '../../common/response-dto-mappable.interface';
 import { GoogleAuthCrdMapper } from '../mappers/google-auth-crd.mapper';
 
 @Controller('/auth/google')
-export class GoogleAuthController implements ResponseDtoMappable {
+export class GoogleAuthController {
   constructor(
     private readonly googleAuthService: GoogleAuthService,
     public readonly responseDtoMapper: GoogleAuthCrdMapper

@@ -25,27 +25,25 @@ export class GoogleAuthService {
       authCode
     );
 
-    const user = await this.usersService.findOneNullable({
+    const existingUser = await this.usersService.findOneNullable({
       email: userInfo.email
     });
 
-    if (user) {
+    if (existingUser) {
       await this.usersService.updateByEmail(userInfo.email, {
         isOAuthEnabled: true
       });
 
       const pair = await this.jwtService.generateTokenPair({
-        userId: user.id,
-        userEmail: user.email,
-        userGuid: user.guid,
+        userId: existingUser.id,
+        userEmail: existingUser.email,
+        userGuid: existingUser.guid,
         roles: [],
         isTwoFactorAuthGranted: false
       });
 
       return {
-        userGuid: user.guid,
-        email: user.email,
-
+        user: existingUser,
         accessToken: pair.accessToken,
         accessTokenExpiresAt: pair.accessTokenExpiresAt,
         accessTokenCookie: pair.accessTokenCookie,
@@ -78,9 +76,7 @@ export class GoogleAuthService {
     });
 
     return {
-      userGuid: newUser.guid,
-      email: newUser.email,
-
+      user: newUser,
       accessToken: pair.accessToken,
       accessTokenExpiresAt: pair.accessTokenExpiresAt,
       accessTokenCookie: pair.accessTokenCookie,

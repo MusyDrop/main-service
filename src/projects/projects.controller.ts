@@ -3,10 +3,13 @@ import {
   Controller,
   Get,
   Param,
+  ParseFilePipe,
   Post,
   Put,
   Req,
-  UseGuards
+  UploadedFile,
+  UseGuards,
+  UseInterceptors
 } from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { AuthTwoFactorGuard } from '../auth/guards/auth-two-factor.guard';
@@ -18,6 +21,9 @@ import { GetProjectsResponseDto } from './dtos/response/get-projects-response.dt
 import { UpdateProjectResponseDto } from './dtos/response/update-project-response.dto';
 import { UpdateProjectDto } from './dtos/update-project.dto';
 import { ProjectsCrdMapper } from './projects-crd.mapper';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FileRequiredPipe } from '../common/pipes/file-required.pipe';
+import { UploadAudioFileResponseDto } from './dtos/response/upload-audio-file-response.dto';
 
 @Controller('/projects')
 export class ProjectsController {
@@ -60,7 +66,23 @@ export class ProjectsController {
     @Param('guid') guid: string,
     @Body() body: UpdateProjectDto
   ): Promise<UpdateProjectResponseDto> {
-    const project = await this.projectsService.update(req.user.id, {});
+    const project = await this.projectsService.updateByUserId(req.user.id, {});
     return this.responseDtoMapper.updateMapper(project);
+  }
+
+  @UseGuards(AuthTwoFactorGuard)
+  @UseInterceptors(FileInterceptor('audio'))
+  @Post('/:guid/audio')
+  public async uploadAudio(
+    @Param('guid') guid: string,
+    @UploadedFile(new ParseFilePipe({ validators: [new FileRequiredPipe({})] }))
+    audio: Express.Multer.File // TODO: Buffer stays in memory, use stream instead
+  ): Promise<UploadAudioFileResponseDto> {
+    const audioFileName = await this.projectsService.uploadAudioFile(
+      guid,
+      audio.buffer
+    );
+
+    return this.responseDtoMapper.uploadAudioMapper(audioFileName);
   }
 }

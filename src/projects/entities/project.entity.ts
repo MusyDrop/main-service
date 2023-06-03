@@ -31,6 +31,9 @@ export class Project {
   @Column({ type: 'jsonb', default: {} })
   settings: ProjectSettings;
 
+  @Column({ name: 'audio_file_name', nullable: true })
+  audioFileName?: string;
+
   @ManyToOne(() => User, {
     nullable: false,
     cascade: true,
