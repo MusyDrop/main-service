@@ -113,7 +113,7 @@ export class StandardAuthService {
         verified: true
       });
 
-    if (!emailVerification) {
+    if (emailVerification && !emailVerification.verified) {
       throw new BadRequestException(
         'Please verify your email in order to sign in.'
       );
