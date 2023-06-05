@@ -1,7 +1,19 @@
 version: "4.0"
 
 services:
-  postgres:
+  render-postgres:
+    image: postgres:15.3
+    restart: always
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+    ports:
+      - '5433:5433'
+    volumes:
+      - postgres-storage:/var/lib/postgresql/data
+    networks:
+      - audio-main-service-network
+  main-postgres:
     image: postgres:15.3
     restart: always
     environment:
@@ -12,13 +24,13 @@ services:
     volumes:
       - postgres-storage:/var/lib/postgresql/data
     networks:
-      - audio-meta-service-network
+      - audio-main-service-network
   redis:
     image: redis:7.0.11
     ports:
       - "6379:6379"
     networks:
-      - audio-meta-service-network
+      - audio-main-service-network
   minio:
     image: minio/minio
     restart: always
@@ -32,10 +44,10 @@ services:
       MINIO_ROOT_PASSWORD: password
     command: server --console-address ":9001" /data
     networks:
-      - audio-meta-service-network
+      - audio-main-service-network
 
 networks:
-  audio-meta-service-network:
+  audio-main-service-network:
 
 volumes:
   postgres-storage:
