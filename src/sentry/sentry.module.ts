@@ -14,7 +14,8 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
       inject: [ExtendedConfigService],
       useFactory: (config: ExtendedConfigService) => ({
         dsn: config.get('sentry.dsn'),
-        debug: config.get('sentry.debug')
+        debug: config.get('sentry.debug'),
+        environment: config.get('server.nodeEnv')
       })
     })
   ],
