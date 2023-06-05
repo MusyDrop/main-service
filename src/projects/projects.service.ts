@@ -10,6 +10,8 @@ import { CreateProjectDto } from './dtos/create-project.dto';
 import { generateUniqueId } from '../utils/unique-id-generator';
 import { S3Service } from '../s3/s3.service';
 import { ExtendedConfigService } from '../config/extended-config.service';
+import { AudiosService } from './audios.service';
+import { AnalyzerApiClient } from '../audio-meta/analyzer.api-client';
 
 @Injectable()
 export class ProjectsService {
@@ -17,7 +19,9 @@ export class ProjectsService {
     @InjectRepository(Project)
     private readonly projectsRepository: Repository<Project>,
     private readonly s3Service: S3Service,
-    private readonly config: ExtendedConfigService
+    private readonly config: ExtendedConfigService,
+    private readonly audiosService: AudiosService,
+    private readonly analyzerApiClient: AnalyzerApiClient
   ) {}
 
   public async create(
@@ -85,7 +89,8 @@ export class ProjectsService {
       guid: props.guid,
       name: props.name,
       templateId: props.templateId,
-      audioFileName: props.audioFileName
+      audio: props.audio,
+      user: props.user
     });
   }
 
@@ -105,9 +110,26 @@ export class ProjectsService {
 
     const project = await this.findOne({ guid });
 
+    const metadata = await this.analyzerApiClient.getAudioMetadata(
+      audioFileName
+    );
+
+    const audio = await this.audiosService.create({
+      audioFileName,
+      durationSecs: metadata.durationSecs,
+      bitsPerSample: metadata.bitsPerSample,
+      numberOfChannels: metadata.numberOfSamples,
+      bitrate: metadata.bitrate,
+      lossless: metadata.lossless,
+      numberOfSamples: metadata.numberOfSamples,
+      codec: metadata.codec,
+      container: metadata.container,
+      compressedRms: metadata.compressedRms
+    });
+
     await this.update({
       id: project.id,
-      audioFileName
+      audio: { id: audio.id }
     });
 
     return audioFileName;

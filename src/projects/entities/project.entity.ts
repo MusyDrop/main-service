@@ -6,12 +6,14 @@ import {
   Generated,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn
 } from 'typeorm';
 import { ProjectSettings } from '../interfaces/project-settings.interface';
 import { User } from '../../users/entities/user.entity';
 import { ProjectDto } from '../dtos/project.dto';
+import { Audio } from './audio.entity';
 
 @Entity({ name: 'projects' })
 export class Project {
@@ -31,8 +33,9 @@ export class Project {
   @Column({ type: 'jsonb', default: {} })
   settings: ProjectSettings;
 
-  @Column({ name: 'audio_file_name', nullable: true })
-  audioFileName?: string;
+  @OneToOne(() => Audio, { nullable: true, cascade: true, onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'audio_id' })
+  audio?: Audio;
 
   @ManyToOne(() => User, {
     nullable: false,
