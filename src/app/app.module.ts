@@ -10,6 +10,8 @@ import { UsersModule } from '../users/users.module';
 import { DbModule } from '../db/db.module';
 import { MetadataMiddleware } from '../common/middlewares/metadata.middleware';
 import { ProjectsModule } from '../projects/projects.module';
+import { AudioMetaModule } from '../audio-meta/audio-meta.module';
+import { SentryModule } from '../sentry/sentry.module';
 
 @Module({
   imports: [
@@ -20,7 +22,9 @@ import { ProjectsModule } from '../projects/projects.module';
     UsersModule,
     MailerModule,
     DbModule,
-    ProjectsModule
+    ProjectsModule,
+    AudioMetaModule,
+    SentryModule
   ],
   controllers: [AppController],
   providers: [AppService]

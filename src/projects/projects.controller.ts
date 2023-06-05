@@ -24,12 +24,14 @@ import { ProjectsCrdMapper } from './projects-crd.mapper';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileRequiredPipe } from '../common/pipes/file-required.pipe';
 import { UploadAudioFileResponseDto } from './dtos/response/upload-audio-file-response.dto';
+import { AnalyzerApiClient } from '../audio-meta/analyzer.api-client';
 
 @Controller('/projects')
 export class ProjectsController {
   constructor(
     private readonly projectsService: ProjectsService,
-    public readonly responseDtoMapper: ProjectsCrdMapper
+    public readonly responseDtoMapper: ProjectsCrdMapper,
+    private readonly analyzerApiClient: AnalyzerApiClient
   ) {}
 
   @UseGuards(AuthTwoFactorGuard)
