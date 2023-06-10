@@ -25,7 +25,7 @@ export class GoogleAuthService {
       authCode
     );
 
-    const existingUser = await this.usersService.findOneNullable({
+    const existingUser = await this.usersService.findOneWithProfileNullable({
       email: userInfo.email
     });
 
@@ -59,7 +59,7 @@ export class GoogleAuthService {
       isOAuthEnabled: true
     });
 
-    await this.profilesServices.create({
+    const profile = await this.profilesServices.create({
       firstName: userInfo.given_name,
       lastName: userInfo.family_name,
       country: userInfo.locale,
@@ -76,7 +76,7 @@ export class GoogleAuthService {
     });
 
     return {
-      user: newUser,
+      user: { ...newUser, profile },
       accessToken: pair.accessToken,
       accessTokenExpiresAt: pair.accessTokenExpiresAt,
       accessTokenCookie: pair.accessTokenCookie,

@@ -27,7 +27,9 @@ export class UsersController {
   @UseGuards(AuthTwoFactorGuard)
   @Get('/me')
   public async findOne(@Req() req: Request): Promise<GetUserResponseDto> {
-    const user = await this.usersService.findOne({ id: req.user.id });
+    const user = await this.usersService.findOneWithProfile({
+      id: req.user.id
+    });
     return this.responseMapper.findOneMapper(user);
   }
 }

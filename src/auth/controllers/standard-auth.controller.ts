@@ -26,8 +26,17 @@ export class StandardAuthController {
   ) {}
 
   @Post('/signup')
-  public async signup(@Body() body: SignupDto): Promise<SignupResponseDto> {
+  public async signup(
+    @Body() body: SignupDto,
+    @Res({ passthrough: true }) res: Response
+  ): Promise<SignupResponseDto> {
     const signupInfo = await this.standardAuthService.signup(body);
+    res.clearCookie('Auth');
+    res.clearCookie('Refresh');
+    res.setHeader('Set-Cookie', [
+      signupInfo.accessTokenCookie,
+      signupInfo.refreshTokenCookie
+    ]);
     return this.responseMapper.signupMapper(signupInfo);
   }
 

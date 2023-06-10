@@ -27,7 +27,7 @@
       const parsedRes = await res.json();
 
       const div = document.getElementById("result");
-      div.innerText = `Success, ${ parsedRes.email }`;
+      div.innerText = `Success, ${ parsedRes.user.email }`;
       setTimeout(() => {
         div.innerText = "";
       }, 5000);
