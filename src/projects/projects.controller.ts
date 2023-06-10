@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  FileTypeValidator,
   Get,
   Param,
   ParseFilePipe,
@@ -77,7 +78,14 @@ export class ProjectsController {
   @Post('/:guid/audio')
   public async uploadAudio(
     @Param('guid') guid: string,
-    @UploadedFile(new ParseFilePipe({ validators: [new FileRequiredPipe({})] }))
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new FileRequiredPipe({}),
+          new FileTypeValidator({ fileType: 'audio/wav' })
+        ]
+      })
+    )
     audio: Express.Multer.File // TODO: Buffer stays in memory, use stream instead
   ): Promise<UploadAudioFileResponseDto> {
     const audioFileName = await this.projectsService.uploadAudioFile(
