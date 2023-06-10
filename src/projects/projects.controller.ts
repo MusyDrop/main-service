@@ -81,6 +81,7 @@ export class ProjectsController {
   @UseInterceptors(FileInterceptor('audio'))
   @Post('/:guid/audio')
   public async uploadAudio(
+    @Req() req: Request,
     @Param('guid') guid: string,
     @UploadedFile(
       new ParseFilePipe({
@@ -94,6 +95,7 @@ export class ProjectsController {
   ): Promise<UploadAudioFileResponseDto> {
     const audioFileName = await this.projectsService.uploadAudioFile(
       guid,
+      req.user.guid,
       audio.buffer
     );
 

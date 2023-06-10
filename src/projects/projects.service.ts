@@ -116,6 +116,7 @@ export class ProjectsService {
    */
   public async uploadAudioFile(
     guid: string,
+    userGuid: string,
     audioFile: Buffer
   ): Promise<string> {
     const audioFileName = await this.s3Service.putObject(
