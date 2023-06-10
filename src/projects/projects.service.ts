@@ -28,7 +28,7 @@ export class ProjectsService {
     userId: number,
     props: CreateProjectDto
   ): Promise<Project> {
-    const existingProject = await this.findOneNullable({
+    const existingProject = await this.findOneNullableWithAudio({
       user: { id: userId },
       name: props.name
     });
@@ -46,19 +46,25 @@ export class ProjectsService {
     });
   }
 
-  public async findOneNullable(
+  public async findOneNullableWithAudio(
     props: DeepPartial<Project>
   ): Promise<Project | null> {
-    return await this.projectsRepository.findOneBy({
-      id: props.id,
-      guid: props.guid,
-      name: props.name,
-      templateId: props.templateId
+    return await this.projectsRepository.findOne({
+      relations: {
+        audio: true
+      },
+      where: {
+        id: props.id,
+        guid: props.guid,
+        name: props.name,
+        templateId: props.templateId,
+        user: { id: props.user?.id }
+      }
     });
   }
 
-  public async findOne(props: DeepPartial<Project>): Promise<Project> {
-    const project = await this.findOneNullable(props);
+  public async findOneWithAudio(props: DeepPartial<Project>): Promise<Project> {
+    const project = await this.findOneNullableWithAudio(props);
 
     if (!project) {
       throw new NotFoundException('Project has not been found');
@@ -67,9 +73,14 @@ export class ProjectsService {
     return project;
   }
 
-  public async findAllByUserId(userId: number): Promise<Project[]> {
-    return await this.projectsRepository.findBy({
-      user: { id: userId }
+  public async findAllByUserIdWithAudio(userId: number): Promise<Project[]> {
+    return await this.projectsRepository.find({
+      relations: {
+        audio: true
+      },
+      where: {
+        user: { id: userId }
+      }
     });
   }
 
@@ -77,14 +88,16 @@ export class ProjectsService {
     userId: number,
     props: DeepPartial<Project>
   ): Promise<Project> {
-    return await this.projectsRepository.save({
+    const project = await this.projectsRepository.save({
       ...props,
       user: { id: userId }
     });
+
+    return await this.findOneWithAudio({ id: project.id });
   }
 
   public async update(props: DeepPartial<Project>): Promise<Project> {
-    return await this.projectsRepository.save({
+    const project = await this.projectsRepository.save({
       id: props.id,
       guid: props.guid,
       name: props.name,
@@ -92,10 +105,12 @@ export class ProjectsService {
       audio: props.audio,
       user: props.user
     });
+
+    return await this.findOneWithAudio({ id: project.id });
   }
 
   /**
-   * @returns generated audio file name
+   * @returns Generated audio file name
    * @param guid
    * @param audioFile
    */
@@ -108,7 +123,7 @@ export class ProjectsService {
       audioFile
     );
 
-    const project = await this.findOne({ guid });
+    const project = await this.findOneWithAudio({ guid });
 
     const metadata = await this.analyzerApiClient.getAudioMetadata(
       audioFileName

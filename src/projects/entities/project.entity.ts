@@ -60,6 +60,7 @@ export class Project {
       guid: project.guid,
       name: project.name,
       templateId: project.templateId,
+      audioFileName: project.audio?.audioFileName,
 
       createdAt: project.createdAt,
       updatedAt: project.updatedAt

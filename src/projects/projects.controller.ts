@@ -31,8 +31,7 @@ import { AnalyzerApiClient } from '../audio-meta/analyzer.api-client';
 export class ProjectsController {
   constructor(
     private readonly projectsService: ProjectsService,
-    public readonly responseDtoMapper: ProjectsCrdMapper,
-    private readonly analyzerApiClient: AnalyzerApiClient
+    public readonly responseDtoMapper: ProjectsCrdMapper
   ) {}
 
   @UseGuards(AuthTwoFactorGuard)
@@ -48,7 +47,9 @@ export class ProjectsController {
   @UseGuards(AuthTwoFactorGuard)
   @Get('/')
   public async findAll(@Req() req: Request): Promise<GetProjectsResponseDto> {
-    const projects = await this.projectsService.findAllByUserId(req.user.id);
+    const projects = await this.projectsService.findAllByUserIdWithAudio(
+      req.user.id
+    );
     return this.responseDtoMapper.findAllMapper(projects);
   }
 
@@ -58,7 +59,10 @@ export class ProjectsController {
     @Req() req: Request,
     @Param('guid') guid: string
   ): Promise<GetProjectResponseDto> {
-    const project = await this.projectsService.findOne({ guid });
+    const project = await this.projectsService.findOneWithAudio({
+      guid,
+      user: { id: req.user.id }
+    });
     return this.responseDtoMapper.findOneMapper(project);
   }
 
