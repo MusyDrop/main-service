@@ -1,11 +1,11 @@
-import { Body, Controller, Patch, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { AuthGuard } from '../auth/guards/auth.guard';
 import { Request } from 'express';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserDto } from './dto/user.dto';
 import { AuthTwoFactorGuard } from '../auth/guards/auth-two-factor.guard';
 import { UsersCrdMapper } from './mappers/users-crd.mapper';
+import { UpdateUserResponseDto } from './dto/response/update-user-response.dto';
+import { GetUserResponseDto } from './dto/response/get-user-response.dto';
 
 @Controller('/users')
 export class UsersController {
@@ -15,12 +15,19 @@ export class UsersController {
   ) {}
 
   @UseGuards(AuthTwoFactorGuard)
-  @Patch('/')
+  @Patch('/me')
   public async update(
     @Req() req: Request,
     @Body() body: UpdateUserDto
-  ): Promise<UserDto> {
+  ): Promise<UpdateUserResponseDto> {
     const user = await this.usersService.updateByIdAndReturn(req.user.id, body);
     return this.responseMapper.updateMapper(user);
+  }
+
+  @UseGuards(AuthTwoFactorGuard)
+  @Get('/me')
+  public async findOne(@Req() req: Request): Promise<GetUserResponseDto> {
+    const user = await this.usersService.findOne({ id: req.user.id });
+    return this.responseMapper.findOneMapper(user);
   }
 }
