@@ -10,7 +10,7 @@ services:
     ports:
       - '5433:5432'
     volumes:
-      - postgres-storage:/var/lib/postgresql/data
+      - render-postgres-storage:/var/lib/postgresql/data
     networks:
       - audio-main-service-network
   main-postgres:
@@ -22,7 +22,7 @@ services:
     ports:
       - '5432:5432'
     volumes:
-      - postgres-storage:/var/lib/postgresql/data
+      - main-postgres-storage:/var/lib/postgresql/data
     networks:
       - audio-main-service-network
   redis:
@@ -50,5 +50,6 @@ networks:
   audio-main-service-network:
 
 volumes:
-  postgres-storage:
+  render-postgres-storage:
+  main-postgres-storage:
   minio-storage:
