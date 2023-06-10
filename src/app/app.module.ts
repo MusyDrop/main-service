@@ -12,6 +12,7 @@ import { MetadataMiddleware } from '../common/middlewares/metadata.middleware';
 import { ProjectsModule } from '../projects/projects.module';
 import { AudioMetaModule } from '../audio-meta/audio-meta.module';
 import { SentryModule } from '../sentry/sentry.module';
+import { RenderServiceModule } from '../render-service/render-service.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { SentryModule } from '../sentry/sentry.module';
     DbModule,
     ProjectsModule,
     AudioMetaModule,
-    SentryModule
+    SentryModule,
+    RenderServiceModule
   ],
   controllers: [AppController],
   providers: [AppService]

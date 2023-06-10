@@ -12,6 +12,7 @@ import { S3Service } from '../s3/s3.service';
 import { ExtendedConfigService } from '../config/extended-config.service';
 import { AudiosService } from './audios.service';
 import { AnalyzerApiClient } from '../audio-meta/analyzer.api-client';
+import { RenderServiceApiClient } from '../render-service/render-service.api-client';
 
 @Injectable()
 export class ProjectsService {
@@ -21,12 +22,14 @@ export class ProjectsService {
     private readonly s3Service: S3Service,
     private readonly config: ExtendedConfigService,
     private readonly audiosService: AudiosService,
-    private readonly analyzerApiClient: AnalyzerApiClient
+    private readonly analyzerApiClient: AnalyzerApiClient,
+    private readonly renderServiceApiClient: RenderServiceApiClient
   ) {}
 
   public async create(
     userId: number,
-    props: CreateProjectDto
+    props: CreateProjectDto,
+    accessToken: string
   ): Promise<Project> {
     const existingProject = await this.findOneNullableWithAudio({
       user: { id: userId },
@@ -39,9 +42,14 @@ export class ProjectsService {
       );
     }
 
+    const template = await this.renderServiceApiClient.findTemplateByGuid(
+      props.templateId,
+      accessToken
+    );
+
     return await this.projectsRepository.save({
       name: props.name,
-      templateId: props.templateId,
+      templateGuid: template.template.guid,
       user: { id: userId }
     });
   }
@@ -57,7 +65,7 @@ export class ProjectsService {
         id: props.id,
         guid: props.guid,
         name: props.name,
-        templateId: props.templateId,
+        templateGuid: props.templateGuid,
         user: { id: props.user?.id }
       }
     });
@@ -101,7 +109,7 @@ export class ProjectsService {
       id: props.id,
       guid: props.guid,
       name: props.name,
-      templateId: props.templateId,
+      templateGuid: props.templateGuid,
       audio: props.audio,
       user: props.user
     });

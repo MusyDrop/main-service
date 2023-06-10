@@ -10,6 +10,7 @@ import { ConfigModule } from '../config/config.module';
 import { AudioMetaModule } from '../audio-meta/audio-meta.module';
 import { AudiosService } from './audios.service';
 import { Audio } from './entities/audio.entity';
+import { RenderServiceModule } from '../render-service/render-service.module';
 
 @Module({
   imports: [
@@ -17,7 +18,8 @@ import { Audio } from './entities/audio.entity';
     AuthModule,
     S3Module,
     ConfigModule,
-    AudioMetaModule
+    AudioMetaModule,
+    RenderServiceModule
   ],
   controllers: [ProjectsController],
   providers: [ProjectsService, ProjectsCrdMapper, AudiosService]

@@ -27,8 +27,8 @@ export class Project {
   @Column({ unique: true })
   name: string;
 
-  @Column({ name: 'template_id' })
-  templateId: string;
+  @Column({ name: 'template_guid' })
+  templateGuid: string;
 
   @Column({ type: 'jsonb', default: {} })
   settings: ProjectSettings;
@@ -59,7 +59,7 @@ export class Project {
     return {
       guid: project.guid,
       name: project.name,
-      templateId: project.templateId,
+      templateId: project.templateGuid,
       audioFileName: project.audio?.audioFileName,
 
       createdAt: project.createdAt,
