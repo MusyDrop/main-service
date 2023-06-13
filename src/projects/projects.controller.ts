@@ -40,7 +40,11 @@ export class ProjectsController {
     @Req() req: Request,
     @Body() body: CreateProjectDto
   ): Promise<CreateProjectResponseDto> {
-    const project = await this.projectsService.create(req.user.id, body);
+    const project = await this.projectsService.create(
+      req.user.id,
+      body,
+      req.accessToken as string
+    );
     return this.responseDtoMapper.createMapper(project);
   }
 
