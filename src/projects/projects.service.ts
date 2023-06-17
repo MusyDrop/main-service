@@ -6,7 +6,7 @@ import {
 import { DeepPartial, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
-import { CreateProjectDto } from './dtos/create-project.dto';
+import { CreateProjectDto } from '../user-projects/dtos/create-project.dto';
 import { generateUniqueId } from '../utils/unique-id-generator';
 import { S3Service } from '../s3/s3.service';
 import { ExtendedConfigService } from '../config/extended-config.service';
@@ -43,7 +43,7 @@ export class ProjectsService {
     }
 
     const template = await this.renderServiceApiClient.findTemplateByGuid(
-      props.templateId,
+      props.templateGuid,
       accessToken
     );
 
@@ -119,20 +119,21 @@ export class ProjectsService {
 
   /**
    * @returns Generated audio file name
+   * @param userId
    * @param guid
    * @param audioFile
    */
   public async uploadAudioFile(
+    userId: number,
     guid: string,
-    userGuid: string,
     audioFile: Buffer
   ): Promise<string> {
+    const project = await this.findOneWithAudio({ guid, user: { id: userId } });
+
     const audioFileName = await this.s3Service.putObject(
       this.config.get('minio.buckets.audioFilesBucket'),
       audioFile
     );
-
-    const project = await this.findOneWithAudio({ guid });
 
     const metadata = await this.analyzerApiClient.getAudioMetadata(
       audioFileName
@@ -157,5 +158,9 @@ export class ProjectsService {
     });
 
     return audioFileName;
+  }
+
+  public async deleteByGuid(userId: number, guid: string): Promise<void> {
+    await this.projectsRepository.softDelete({ guid, user: { id: userId } });
   }
 }

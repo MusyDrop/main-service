@@ -26,7 +26,7 @@ export class RefreshToken {
   @JoinColumn({ name: 'user_id' })
   user: User;
 
-  @Column({ default: false })
+  @Column({ default: false, name: 'is_two_factor_auth_granted' })
   isTwoFactorAuthGranted: boolean;
 
   @Column({ name: 'expires_at' })

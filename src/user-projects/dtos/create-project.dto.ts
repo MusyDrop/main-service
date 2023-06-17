@@ -6,5 +6,5 @@ export class CreateProjectDto {
   name: string;
 
   @IsUUID()
-  templateId: string;
+  templateGuid: string;
 }

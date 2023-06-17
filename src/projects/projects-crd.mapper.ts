@@ -1,13 +1,13 @@
 import { ProjectsController } from './projects.controller';
 import { ResponseDtoMapper } from '../common/types';
-import { CreateProjectResponseDto } from './dtos/response/create-project-response.dto';
-import { GetProjectResponseDto } from './dtos/response/get-project-response.dto';
-import { GetProjectsResponseDto } from './dtos/response/get-projects-response.dto';
-import { Injectable } from '@nestjs/common';
+import { CreateProjectResponseDto } from '../user-projects/dtos/response/create-project-response.dto';
+import { GetProjectResponseDto } from '../user-projects/dtos/response/get-project-response.dto';
+import { GetProjectsResponseDto } from '../user-projects/dtos/response/get-projects-response.dto';
 import { Project } from './entities/project.entity';
-import { UpdateProjectResponseDto } from './dtos/response/update-project-response.dto';
-import { UploadAudioFileResponseDto } from './dtos/response/upload-audio-file-response.dto';
+import { UpdateProjectResponseDto } from '../user-projects/dtos/response/update-project-response.dto';
+import { UploadAudioFileResponseDto } from '../user-projects/dtos/response/upload-audio-file-response.dto';
 import { ProjectDto } from './dtos/project.dto';
+import { Injectable } from '@nestjs/common';
 
 // NOTE: CRD - ControllerResponseDto
 @Injectable()

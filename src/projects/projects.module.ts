@@ -22,6 +22,7 @@ import { RenderServiceModule } from '../render-service/render-service.module';
     RenderServiceModule
   ],
   controllers: [ProjectsController],
-  providers: [ProjectsService, ProjectsCrdMapper, AudiosService]
+  providers: [ProjectsService, ProjectsCrdMapper, AudiosService],
+  exports: [ProjectsService]
 })
 export class ProjectsModule {}

@@ -59,7 +59,7 @@ export class Project {
     return {
       guid: project.guid,
       name: project.name,
-      templateId: project.templateGuid,
+      templateGuid: project.templateGuid,
       audioFileName: project.audio?.audioFileName,
 
       createdAt: project.createdAt,

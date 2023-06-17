@@ -1,7 +1,7 @@
 export class ProjectDto {
   guid: string;
   name: string;
-  templateId: string;
+  templateGuid: string;
   audioFileName?: string;
 
   createdAt: Date;

@@ -13,6 +13,8 @@ import { ProjectsModule } from '../projects/projects.module';
 import { AudioMetaModule } from '../audio-meta/audio-meta.module';
 import { SentryModule } from '../sentry/sentry.module';
 import { RenderServiceModule } from '../render-service/render-service.module';
+import { UserProjectsController } from '../user-projects/user-projects.controller';
+import { UserProjectsModule } from '../user-projects/user-projects.module';
 
 @Module({
   imports: [
@@ -26,7 +28,8 @@ import { RenderServiceModule } from '../render-service/render-service.module';
     ProjectsModule,
     AudioMetaModule,
     SentryModule,
-    RenderServiceModule
+    RenderServiceModule,
+    UserProjectsModule
   ],
   controllers: [AppController],
   providers: [AppService]
