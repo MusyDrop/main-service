@@ -20,7 +20,7 @@ export class Audio {
   @Column({ name: 'audio_file_name', unique: true })
   audioFileName: string;
 
-  @Column({ name: 'duration_secs', type: 'decimal' })
+  @Column({ name: 'duration_secs', type: 'real' })
   durationSecs: number;
 
   @Column({ name: 'bits_per_sample' })
@@ -35,7 +35,7 @@ export class Audio {
   @Column()
   lossless: boolean;
 
-  @Column()
+  @Column({ name: 'number_of_samples' })
   numberOfSamples: number;
 
   @Column()
@@ -44,8 +44,8 @@ export class Audio {
   @Column()
   container: string;
 
-  @Column({ type: 'bytea', name: 'compressed_rms' })
-  compressedRms: Buffer;
+  @Column('int', { array: true, name: 'compressed_rms' })
+  compressedRms: number[];
 
   @CreateDateColumn({ name: 'created_at' })
   createdAt: Date;

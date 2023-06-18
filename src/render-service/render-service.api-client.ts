@@ -17,24 +17,32 @@ export class RenderServiceApiClient {
     guid: string,
     accessToken: string
   ): Promise<GetOneTemplateResponseDto> {
-    const res = await this.axios.get(`/templates/${guid}`, {
-      headers: {
-        Cookie: `Auth=${accessToken}`
-      }
-    });
-    return res.data;
+    try {
+      const res = await this.axios.get(`/templates/${guid}`, {
+        headers: {
+          Cookie: `Auth=${accessToken}`
+        }
+      });
+      return res.data;
+    } catch (e) {
+      throw e;
+    }
   }
 
   public async render(
     dto: RenderJobDto,
     accessToken: string
   ): Promise<RenderJobResponseDto> {
-    const res = await this.axios.post(`/jobs/render`, dto, {
-      headers: {
-        Cookie: `Auth=${accessToken}`
-      }
-    });
+    try {
+      const res = await this.axios.post(`/jobs/render`, dto, {
+        headers: {
+          Cookie: `Auth=${accessToken}`
+        }
+      });
 
-    return res.data;
+      return res.data;
+    } catch (e) {
+      throw e;
+    }
   }
 }

@@ -6,6 +6,7 @@ import {
   Get,
   Param,
   ParseFilePipe,
+  Patch,
   Post,
   Put,
   Req,
@@ -71,17 +72,21 @@ export class UserProjectsController {
     return this.responseMapper.createMapper(project);
   }
 
-  @Put('/:guid')
+  @Patch('/:guid')
   public async update(
     @Param('guid', new ValidateUuidPipe()) guid: string,
     @Req() req: Request,
     @Body() body: UpdateProjectDto
   ): Promise<UpdateProjectResponseDto> {
-    const project = await this.projectsService.updateByUserId(req.user.id, {
-      templateGuid: body.templateGuid,
-      name: body.name,
-      settings: body.settings
-    });
+    const project = await this.projectsService.updateByUserId(
+      req.user.id,
+      guid,
+      {
+        templateGuid: body.templateGuid,
+        name: body.name,
+        settings: body.settings
+      }
+    );
     return this.responseMapper.updateMapper(project);
   }
 

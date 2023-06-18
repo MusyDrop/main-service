@@ -1,4 +1,4 @@
-import { Injectable, Scope } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { OAuth2Client } from 'google-auth-library';
 import { ExtendedConfigService } from '../../config/extended-config.service';
 import { GoogleUserInfo } from '../interfaces/google-user-info.interface';

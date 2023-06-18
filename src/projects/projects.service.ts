@@ -94,14 +94,22 @@ export class ProjectsService {
 
   public async updateByUserId(
     userId: number,
+    guid: string,
     props: DeepPartial<Project>
   ): Promise<Project> {
-    const project = await this.projectsRepository.save({
-      ...props,
-      user: { id: userId }
-    });
+    await this.projectsRepository.update(
+      {
+        guid,
+        user: { id: userId }
+      },
+      {
+        name: props.name,
+        templateGuid: props.templateGuid,
+        settings: props.settings
+      }
+    );
 
-    return await this.findOneWithAudio({ id: project.id });
+    return await this.findOneWithAudio({ guid });
   }
 
   public async update(props: DeepPartial<Project>): Promise<Project> {
@@ -176,13 +184,14 @@ export class ProjectsService {
         'Please upload audio file before rendering'
       );
     }
-
     const renderDto = await this.renderServiceApiClient.render(
       {
         templateGuid: project.templateGuid,
         audioFileName: project.audio.audioFileName,
         projectGuid: project.guid,
-        settings: project.settings
+        settings: project.settings,
+        compressedRms: Array.from(project.audio.compressedRms),
+        audioDurationSecs: parseFloat(project.audio.durationSecs.toFixed(2))
       },
       accessToken
     );
