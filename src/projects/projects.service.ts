@@ -163,4 +163,30 @@ export class ProjectsService {
   public async deleteByGuid(userId: number, guid: string): Promise<void> {
     await this.projectsRepository.softDelete({ guid, user: { id: userId } });
   }
+
+  public async render(
+    userId: number,
+    guid: string,
+    accessToken: string
+  ): Promise<any> {
+    const project = await this.findOneWithAudio({ user: { id: userId }, guid });
+
+    if (!project.audio) {
+      throw new UnprocessableEntityException(
+        'Please upload audio file before rendering'
+      );
+    }
+
+    const renderDto = await this.renderServiceApiClient.render(
+      {
+        templateGuid: project.templateGuid,
+        audioFileName: project.audio.audioFileName,
+        projectGuid: project.guid,
+        settings: project.settings
+      },
+      accessToken
+    );
+
+    return renderDto;
+  }
 }

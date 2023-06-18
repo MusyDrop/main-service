@@ -9,6 +9,7 @@ import { GetProjectResponseDto } from '../dtos/response/get-project-response.dto
 import { UpdateProjectResponseDto } from '../dtos/response/update-project-response.dto';
 import { UploadAudioFileResponseDto } from '../dtos/response/upload-audio-file-response.dto';
 import { DeleteProjectResponseDto } from '../dtos/response/delete-project-response.dto';
+import { RenderJobResponseDto } from '../../render-service/dtos/response/render-job-response.dto';
 
 @Injectable()
 export class UserProjectsCrdMapper
@@ -46,5 +47,9 @@ export class UserProjectsCrdMapper
 
   public deleteMapper(): DeleteProjectResponseDto {
     return {};
+  }
+
+  public renderMapper(dto: RenderJobResponseDto): RenderJobResponseDto {
+    return dto;
   }
 }

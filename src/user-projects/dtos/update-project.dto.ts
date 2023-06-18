@@ -1,5 +1,11 @@
 import { AnyObject } from '../../utils/utility-types';
-import { IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsObject,
+  IsOptional,
+  IsString,
+  IsUUID
+} from 'class-validator';
 
 export class UpdateProjectDto {
   @IsString()
@@ -10,4 +16,8 @@ export class UpdateProjectDto {
   @IsObject()
   @IsOptional()
   settings?: AnyObject;
+
+  @IsOptional()
+  @IsUUID()
+  templateGuid?: string;
 }
