@@ -6,5 +6,6 @@ export class CreateProjectDto {
   name: string;
 
   @IsUUID()
+  @IsNotEmpty()
   templateGuid: string;
 }

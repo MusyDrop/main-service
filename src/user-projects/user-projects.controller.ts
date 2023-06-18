@@ -60,7 +60,6 @@ export class UserProjectsController {
 
   @Post('/')
   public async create(
-    @Param('guid', new ValidateUuidPipe()) guid: string,
     @Req() req: Request,
     @Body() body: CreateProjectDto
   ): Promise<CreateProjectResponseDto> {
@@ -96,7 +95,7 @@ export class UserProjectsController {
   }
 
   @UseInterceptors(FileInterceptor('audio'))
-  @Post('/:guid')
+  @Post('/:guid/audio')
   public async uploadAudio(
     @Param('guid', new ValidateUuidPipe()) guid: string,
     @Req() req: Request,

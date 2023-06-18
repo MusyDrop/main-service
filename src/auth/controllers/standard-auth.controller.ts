@@ -33,10 +33,10 @@ export class StandardAuthController {
     const signupInfo = await this.standardAuthService.signup(body);
     res.clearCookie('Auth');
     res.clearCookie('Refresh');
-    res.setHeader('Set-Cookie', [
-      signupInfo.accessTokenCookie,
-      signupInfo.refreshTokenCookie
-    ]);
+    // res.setHeader('Set-Cookie', [
+    //   signupInfo.accessTokenCookie,
+    //   signupInfo.refreshTokenCookie
+    // ]);
     return this.responseMapper.signupMapper(signupInfo);
   }
 

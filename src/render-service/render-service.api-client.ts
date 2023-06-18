@@ -29,7 +29,7 @@ export class RenderServiceApiClient {
     dto: RenderJobDto,
     accessToken: string
   ): Promise<RenderJobResponseDto> {
-    const res = await this.axios.get(`/jobs/render`, {
+    const res = await this.axios.post(`/jobs/render`, dto, {
       headers: {
         Cookie: `Auth=${accessToken}`
       }
